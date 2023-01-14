@@ -17,7 +17,6 @@ prisma/db.sqlite-journal
 out/
 
 # expo
-.expo/
 dist/
 
 # production
