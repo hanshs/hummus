@@ -1,8 +1,8 @@
 import { createTRPCNext } from "@trpc/next";
 import { httpBatchLink, loggerLink } from "@trpc/client";
 import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
-import type { AppRouter } from "@acme/api";
-import { transformer } from "@acme/api/transformer";
+import type { AppRouter } from "@hummus/api";
+import { transformer } from "@hummus/api/transformer";
 
 const getBaseUrl = () => {
   if (typeof window !== "undefined") return ""; // browser should use relative url

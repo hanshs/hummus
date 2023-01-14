@@ -9,7 +9,7 @@
 const config = {
   reactStrictMode: true,
   /** Enables hot reloading for local packages without a build step */
-  transpilePackages: ["@acme/api", "@acme/auth", "@acme/db"],
+  transpilePackages: ["@hummus/api", "@hummus/auth", "@hummus/db"],
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: !!process.env.CI },
   typescript: { ignoreBuildErrors: !!process.env.CI },
