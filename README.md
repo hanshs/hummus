@@ -48,11 +48,14 @@ cp .env.example .env
 pnpm db:push
 ```
 
-###
+### Planetscale
+
+#### Useful
 
 start planetscale proxy
 `pscale auth login`
-`pscale connect hummus initial-setup --port 3309`
+`pscale connect hummus <branch> --port 3309`
+`pscale branch list hummus`
 
 ## Deployment
 

@@ -7,9 +7,9 @@ generator client {
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
-    // relationMode = "prisma"
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
 // auth models
@@ -59,21 +59,56 @@ model VerificationToken {
 
 // hummus models
 model Feature {
-    id          String     @id @default(cuid())
-    title       String
+    id          Int        @id @default(autoincrement())
+    title       String     @unique
     description String
     scenarios   Scenario[]
 }
 
 model Scenario {
-    id        String         @id @default(cuid())
-    feature   Feature?       @relation(fields: [featureId], references: [id])
-    featureId String?
-    steps     ScenarioStep[]
+    id    Int    @id @default(autoincrement())
+    name  String
+    steps Step[]
+
+    feature   Feature @relation(fields: [featureId], references: [id])
+    featureId Int
+
+    @@index([featureId])
 }
 
-model ScenarioStep {
-    id         String    @id @default(cuid())
-    scenario   Scenario? @relation(fields: [scenarioId], references: [id])
-    scenarioId String?
+model Step {
+    id Int @id @default(autoincrement())
+
+    scenario   Scenario @relation(fields: [scenarioId], references: [id])
+    scenarioId Int
+    action     Action   @relation(fields: [actionId], references: [id])
+    actionId   Int
+
+    @@index([scenarioId])
+    @@index([actionId])
+}
+
+model Action {
+    id        Int     @id @default(autoincrement())
+    behaviour String
+    params    Param[]
+    steps     Step[]
+}
+
+model Param {
+    id      Int       @id @default(autoincrement())
+    name    String
+    value   String
+    actions Action[]
+    type    ParamType @relation(fields: [paramTypeId], references: [id])
+
+    paramTypeId Int
+
+    @@index([paramTypeId])
+}
+
+model ParamType {
+    id    Int     @id @default(autoincrement())
+    type  String
+    Param Param[]
 }
