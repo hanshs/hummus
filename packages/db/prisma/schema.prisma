@@ -88,9 +88,11 @@ model Step {
     @@index([actionId])
 }
 
+// TODO behaviour peab olema eraldi entity vist, kuis behaviouri tekst on @unique
+// ja võimalik et Actionit ei ole vaja vaid Stepi küljes on Behaviour ja Params
 model Action {
     id        Int     @id @default(autoincrement())
-    behaviour String
+    behaviour String  @unique
     params    Param[]
     steps     Step[]
 }
@@ -98,7 +100,7 @@ model Action {
 model Param {
     id      Int       @id @default(autoincrement())
     name    String
-    value   String
+    value   String    @unique
     actions Action[]
     type    ParamType @relation(fields: [paramTypeId], references: [id])
 
@@ -109,6 +111,6 @@ model Param {
 
 model ParamType {
     id    Int     @id @default(autoincrement())
-    type  String
+    type  String  @unique
     Param Param[]
 }
