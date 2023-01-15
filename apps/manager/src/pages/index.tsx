@@ -3,21 +3,22 @@ import Head from "next/head";
 import { signIn, signOut } from "next-auth/react";
 import { api, type RouterOutputs } from "../utils/api";
 
-const PostCard: React.FC<{
-  post: RouterOutputs["post"]["all"][number];
-}> = ({ post }) => {
-  return (
-    <div className="max-w-2xl rounded-lg border-2 border-gray-500 p-4 transition-all hover:scale-[101%]">
-      <h2 className="text-2xl font-bold text-[hsl(280,100%,70%)]">
-        {post.title}
-      </h2>
-      <p>{post.content}</p>
-    </div>
-  );
-};
+// const PostCard: React.FC<{
+//   post: RouterOutputs["post"]["all"][number];
+// }> = ({ post }) => {
+//   return (
+//     <div className="max-w-2xl rounded-lg border-2 border-gray-500 p-4 transition-all hover:scale-[101%]">
+//       <h2 className="text-2xl font-bold text-[hsl(280,100%,70%)]">
+//         {post.title}
+//       </h2>
+//       <p>{post.content}</p>
+//     </div>
+//   );
+// };
 
 const Home: NextPage = () => {
-  const postQuery = api.post.all.useQuery();
+  // const postQuery = api.post.all.useQuery();
+  // api.post.
   // const asd  = api.auth.
   // postQuery.data
 
@@ -34,7 +35,7 @@ const Home: NextPage = () => {
           </h1>
           <AuthShowcase />
 
-          <div className="flex h-[60vh] justify-center overflow-y-scroll px-4 text-2xl">
+          {/* <div className="flex h-[60vh] justify-center overflow-y-scroll px-4 text-2xl">
             {postQuery.data ? (
               <div className="flex flex-col gap-4">
                 {postQuery.data?.map((p) => {
@@ -44,7 +45,7 @@ const Home: NextPage = () => {
             ) : (
               <p>Loading..</p>
             )}
-          </div>
+          </div> */}
         </div>
       </main>
     </>
