@@ -18,6 +18,7 @@ import { api, type RouterOutputs } from "../utils/api";
 
 const Home: NextPage = () => {
   // const postQuery = api.post.all.useQuery();
+  // const query = api.post.all.useQuery();
   // api.post.
   // const asd  = api.auth.
   // postQuery.data
