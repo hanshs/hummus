@@ -12,66 +12,52 @@ datasource db {
     relationMode = "prisma"
 }
 
-// auth models
-model Account {
-    id                String  @id @default(cuid())
-    userId            String
-    type              String
-    provider          String
-    providerAccountId String
-    refresh_token     String? @db.Text
-    access_token      String? @db.Text
-    expires_at        Int?
-    token_type        String?
-    scope             String?
-    id_token          String? @db.Text
-    session_state     String?
-    user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-    @@unique([provider, providerAccountId])
-}
-
-model Session {
-    id           String   @id @default(cuid())
-    sessionToken String   @unique
-    userId       String
-    expires      DateTime
-    user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id        String          @id @default(cuid())
+    username  String          @unique
+    password  String
+    createdAt DateTime        @default(now())
+    updatedAt DateTime        @updatedAt
+    projects  UserOnProject[]
 }
 
-model VerificationToken {
-    identifier String
-    token      String   @unique
-    expires    DateTime
+model Project {
+    id   String @id @default(uuid())
+    name String
 
-    @@unique([identifier, token])
+    users    UserOnProject[]
+    features Feature[]
 }
 
-// hummus models
+model UserOnProject {
+    user      User    @relation(fields: [userId], references: [id])
+    userId    String
+    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    projectId String
+
+    @@id([projectId, userId])
+    @@index([projectId])
+    @@index([userId])
+}
+
 model Feature {
-    id          Int        @id @default(autoincrement())
-    title       String     @unique
-    description String
+    id          String     @id @default(uuid())
+    title       String?
+    description String?
     scenarios   Scenario[]
+    project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    projectId   String
+
+    @@index([projectId])
 }
 
 model Scenario {
-    id    Int    @id @default(autoincrement())
-    name  String
+    id    Int     @id @default(autoincrement())
+    name  String?
     steps Step[]
 
     feature   Feature @relation(fields: [featureId], references: [id])
-    featureId Int
+    featureId String
 
     @@index([featureId])
 }
@@ -79,30 +65,38 @@ model Scenario {
 model Step {
     id Int @id @default(autoincrement())
 
-    scenario   Scenario @relation(fields: [scenarioId], references: [id])
-    scenarioId Int
-    action     Action   @relation(fields: [actionId], references: [id])
-    actionId   Int
+    order       Int
+    scenario    Scenario  @relation(fields: [scenarioId], references: [id])
+    scenarioId  Int
+    behaviour   Behaviour @relation(fields: [behaviourId], references: [id])
+    behaviourId Int
+    params      Param[]
 
     @@index([scenarioId])
-    @@index([actionId])
+    @@index([behaviourId])
 }
 
 // TODO behaviour peab olema eraldi entity vist, kuis behaviouri tekst on @unique
 // ja võimalik et Actionit ei ole vaja vaid Stepi küljes on Behaviour ja Params
-model Action {
-    id        Int     @id @default(autoincrement())
-    behaviour String  @unique
-    params    Param[]
-    steps     Step[]
+// model Action {
+//     id        Int       @id @default(autoincrement())
+//     behaviour Behaviour
+//     params    Param[]
+//     steps     Step[]
+// }
+
+model Behaviour {
+    id    Int    @id @default(autoincrement())
+    value String @unique
+    Step  Step[]
 }
 
 model Param {
-    id      Int       @id @default(autoincrement())
-    name    String
-    value   String    @unique
-    actions Action[]
-    type    ParamType @relation(fields: [paramTypeId], references: [id])
+    id    Int       @id @default(autoincrement())
+    name  String    @unique
+    value String    @unique
+    steps Step[]
+    type  ParamType @relation(fields: [paramTypeId], references: [id])
 
     paramTypeId Int
 

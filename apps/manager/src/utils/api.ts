@@ -1,6 +1,6 @@
 import { createTRPCNext } from "@trpc/next";
 import { httpBatchLink, loggerLink } from "@trpc/client";
-import { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
+import type { inferRouterInputs, inferRouterOutputs } from "@trpc/server";
 import type { AppRouter } from "@hummus/api";
 import { transformer } from "@hummus/api/transformer";
 
@@ -41,3 +41,4 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  * @example type HelloOutput = RouterOutputs['example']['hello']
  **/
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
+// type asd = RouterOutputs['features']
