@@ -1,0 +1,21 @@
+{
+  "name": "@hummus/runner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsx watch index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Hans Starkopf",
+  "license": "ISC",
+  "devDependencies": {
+    "@hummus/api": "workspace:*",
+    "tsx": "^3.12.2"
+  },
+  "dependencies": {
+    "@trpc/client": "^10.8.1",
+    "node-fetch": "^3.3.0"
+  }
+}

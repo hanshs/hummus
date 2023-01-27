@@ -5,6 +5,7 @@
   "types": "./index.ts",
   "license": "MIT",
   "scripts": {
+    "dev": "tsx watch ./src/server",
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint",
     "type-check": "tsc --noEmit"
@@ -21,7 +22,10 @@
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/node": "^18.0.0",
     "eslint": "^8.30.0",
+    "http": "0.0.1-security",
+    "tsx": "^3.12.2",
     "typescript": "^4.9.4"
   }
 }

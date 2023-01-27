@@ -1,11 +1,13 @@
 import { getIronSession, IronSessionOptions } from "iron-session";
 import { GetServerSidePropsContext, GetServerSidePropsResult, NextApiRequest, NextApiResponse, Redirect } from "next/types";
 import { withIronSessionSsr } from 'iron-session/next'
+import http from 'node:http'
 declare module "iron-session" {
     interface IronSessionData {
         isLoggedIn: boolean;
         username: string;
         userId: string;
+        token: string;
     }
 }
 
@@ -17,7 +19,7 @@ const sessionOptions: IronSessionOptions = {
     },
 };
 
-type Request = GetServerSidePropsContext["req"] | NextApiRequest
+type Request = GetServerSidePropsContext["req"] | NextApiRequest | http.IncomingMessage
 type Response = GetServerSidePropsContext["res"] | NextApiResponse
 export async function getServerSession(
     req: Request, res: Response

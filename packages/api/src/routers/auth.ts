@@ -23,6 +23,7 @@ export const authRouter = trpc.router({
         ctx.session.isLoggedIn = true
         ctx.session.username = user.username
         ctx.session.userId = user.id
+        ctx.session.token = user.accessToken
 
         await ctx.session.save();
 
