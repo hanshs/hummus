@@ -1,10 +1,10 @@
 {
-  "name": "create-t3-turbo",
+  "name": "hummus",
   "private": true,
   "packageManager": "pnpm@7.13.0",
   "scripts": {
     "build": "turbo build",
-    "clean": "rm -rf node_modules",
+    "clean": "rimraf node_modules",
     "clean:workspaces": "turbo clean",
     "db:generate": "turbo db:generate",
     "db:push": "turbo db:push db:generate",
@@ -25,7 +25,8 @@
     "prettier": "^2.8.1",
     "prettier-plugin-tailwindcss": "^0.2.1",
     "turbo": "^1.6.3",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "rimraf": "^4.1.2"
   },
   "prisma": {
     "seed": "ts-node seed.ts"

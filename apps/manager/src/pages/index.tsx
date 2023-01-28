@@ -1,7 +1,7 @@
 import { api } from "../utils/api";
 import React from "react";
-import { withSession } from "@hummus/auth";
 import { useRouter } from "next/router";
+import { withSession } from "../utils/session";
 
 interface AuthenticationForm extends HTMLFormElement {
   readonly elements: HTMLFormControlsCollection & {

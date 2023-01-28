@@ -1,9 +1,9 @@
 import bcrypt from 'bcryptjs'
 import { TRPCError } from "@trpc/server";
-import { verify } from "@hummus/auth";
 import { publicProcedure, protectedProcedure } from "../procedure";
 import { trpc } from '../trpc';
 import { z } from 'zod';
+import { verify } from '../utils/auth';
 
 const authSchema = z.object(
   {

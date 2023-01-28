@@ -1,7 +1,8 @@
-import { getServerSession } from "@hummus/auth";
 import { prisma } from "@hummus/db";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
 import { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
+import { getIronSession } from "iron-session";
+import { sessionOptions } from "./session";
 
 /**
  * context used in router, used to process every request that goes through your tRPC endpoint
@@ -20,12 +21,8 @@ export const createContext = async (opts: CreateNextContextOptions | CreateHTTPC
         }
     }
 
-    const session = await getServerSession(opts.req, opts.res)
-<<<<<<< Updated upstream
+    const session = await getIronSession(opts.req, opts.res, sessionOptions)
 
-=======
-    console.log('jou headersid on createContextis:', opts.req.headers.authorization)
->>>>>>> Stashed changes
     return {
         session,
         prisma
