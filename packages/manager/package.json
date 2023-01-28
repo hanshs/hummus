@@ -1,7 +1,6 @@
 {
   "name": "@hummus/manager",
-  "version": "0.1.0",
-  "private": true,
+  "author": "Hans Starkopf",
   "scripts": {
     "build": "pnpm with-env next build",
     "clean": "rimraf .next .turbo node_modules",

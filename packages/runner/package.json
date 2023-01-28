@@ -1,7 +1,6 @@
 {
   "name": "@hummus/runner",
-  "version": "1.0.0",
-  "description": "",
+  "author": "Hans Starkopf",
   "main": "index.js",
   "scripts": {
     "dev": "pnpm with-env tsx watch index.ts",
@@ -9,9 +8,6 @@
     "with-env": "dotenv -e ../../.env --",
     "clean": "rimraf .turbo node_modules"
   },
-  "keywords": [],
-  "author": "Hans Starkopf",
-  "license": "ISC",
   "dependencies": {
     "@hummus/api": "workspace:*",
     "@trpc/client": "^10.8.1",

@@ -1,9 +1,8 @@
 {
   "name": "@hummus/db",
-  "version": "0.1.0",
+  "author": "Hans Starkopf",
   "main": "./index.ts",
   "types": "./index.ts",
-  "license": "MIT",
   "scripts": {
     "clean": "rimraf .turbo ./node_modules",
     "db:generate": "pnpm with-env prisma generate",
