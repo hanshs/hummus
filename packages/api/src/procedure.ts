@@ -1,4 +1,4 @@
-import { enforceUserIsAuthed } from "./middleware";
+import { enforceAuth } from "./middleware";
 import { trpc } from "./trpc";
 
 
@@ -8,7 +8,7 @@ import { trpc } from "./trpc";
  *
  * @see https://trpc.io/docs/procedures
  */
-export const protectedProcedure = trpc.procedure.use(enforceUserIsAuthed);
+export const protectedProcedure = trpc.procedure.use(enforceAuth);
 /**
  * Public (unauthed) procedure
  */

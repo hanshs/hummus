@@ -1,10 +1,10 @@
-import { appRouter, createTRPCContext } from "@hummus/api";
+import { router, createContext } from "@hummus/api";
 import { createNextApiHandler } from "@trpc/server/adapters/next";
 
 // export API handler
 export default createNextApiHandler({
-  router: appRouter,
-  createContext: createTRPCContext,
+  router,
+  createContext,
 });
 
 // to enable cors

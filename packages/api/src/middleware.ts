@@ -4,7 +4,7 @@ import { trpc } from "./trpc";
 /**
  * enforces users are logged in before running the procedure
  */
-export const enforceUserIsAuthed = trpc.middleware(({ ctx, next }) => {
+export const enforceAuth = trpc.middleware(({ ctx, next }) => {
     if (!ctx.session || !ctx.session.isLoggedIn) {
         throw new TRPCError({ code: "UNAUTHORIZED" });
     }

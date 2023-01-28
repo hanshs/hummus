@@ -21,7 +21,11 @@ export const createContext = async (opts: CreateNextContextOptions | CreateHTTPC
     }
 
     const session = await getServerSession(opts.req, opts.res)
+<<<<<<< Updated upstream
 
+=======
+    console.log('jou headersid on createContextis:', opts.req.headers.authorization)
+>>>>>>> Stashed changes
     return {
         session,
         prisma

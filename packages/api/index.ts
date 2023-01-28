@@ -1,2 +1,5 @@
-export { createContext as createTRPCContext } from './src/context'
-export { router as appRouter, type AppRouter } from './src/router';
+import { router } from './src/router';
+
+export { createContext } from './src/context'
+export { router }
+export type Router = typeof router;

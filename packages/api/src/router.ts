@@ -18,4 +18,3 @@ export const router = trpc.router({
     params: paramsRouter,
     steps: stepsRouter,
 });
-export type AppRouter = typeof router;
