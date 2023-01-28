@@ -7,7 +7,7 @@ Hummus is a popular Middle Eastern dish that is made from ground chickpeas and a
 ```
 .github
   └─ workflows
-        └─ CI with pnpm cache setup
+        └─ CI
 .vscode
   └─ Recommended extensions and settings for VSCode users
 apps
@@ -33,7 +33,7 @@ To get it running, follow the steps below:
 
 ```diff
 # Install dependencies
-pnpm i
+yarn
 
 # In packages/db/prisma update schema.prisma provider to use sqlite
 # or use your own database provider
@@ -45,7 +45,7 @@ pnpm i
 cp .env.example .env
 
 # Push the Prisma schema to your database
-pnpm db:push
+yarn db:push
 ```
 
 ### Planetscale

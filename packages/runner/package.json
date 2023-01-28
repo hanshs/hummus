@@ -1,15 +1,16 @@
 {
   "name": "@hummus/runner",
   "author": "Hans Starkopf",
+  "version": "0.0.1",
   "main": "index.js",
   "scripts": {
-    "dev": "pnpm with-env tsx watch index.ts",
+    "dev": "yarn with-env tsx watch index.ts",
     "clean": "rimraf .turbo node_modules --impl=native",
     "test": "echo \"Error: no test specified\" && exit 1",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@hummus/api": "workspace:*",
+    "@hummus/api": "*",
     "@trpc/client": "^10.8.1",
     "node-fetch": "^3.3.0",
     "@playwright/test": "^1.30.0",

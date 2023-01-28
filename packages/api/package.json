@@ -1,6 +1,7 @@
 {
   "name": "@hummus/api",
   "author": "Hans Starkopf",
+  "version": "0.0.1",
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
@@ -10,7 +11,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@hummus/db": "workspace:*",
+    "@hummus/db": "*",
     "@trpc/client": "^10.8.1",
     "@trpc/server": "^10.8.1",
     "bcryptjs": "^2.4.3",
