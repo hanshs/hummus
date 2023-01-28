@@ -21,11 +21,11 @@ export const authRouter = trpc.router({
 
       if (matches) {
         ctx.session.isLoggedIn = true
-        ctx.session.username = user.username
         ctx.session.userId = user.id
         ctx.session.token = user.accessToken
+        ctx.session.username = user.username
 
-        await ctx.session.save();
+        if ('save' in ctx.session) await ctx.session.save();
 
         return ctx.session
       }
@@ -58,6 +58,6 @@ export const authRouter = trpc.router({
     return "you can see this secret message!";
   }),
   logout: publicProcedure.mutation(async ({ ctx }) => {
-    await ctx.session.destroy()
+    if ('destroy' in ctx.session) await ctx.session.destroy()
   })
 });

@@ -1,5 +1,5 @@
 import { getIronSession, IronSessionOptions } from "iron-session";
-import { GetServerSidePropsContext, GetServerSidePropsResult, NextApiRequest, NextApiResponse, Redirect } from "next/types";
+import { GetServerSidePropsContext, NextApiRequest, NextApiResponse, Redirect } from "next/types";
 import { withIronSessionSsr } from 'iron-session/next'
 import http from 'node:http'
 declare module "iron-session" {

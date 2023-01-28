@@ -98,16 +98,25 @@ async function upsertBehaviours() {
 
     return await prisma.$transaction(transactions)
 }
+
+const credentials = {
+    username: process.env.SEED_USER_USERNAME,
+    password: process.env.SEED_USER_PASSWORD
+}
+
 async function seed() {
     await empty()
     await upsertParamTypes()
     await upsertParams()
     await upsertBehaviours()
+
+    if (!credentials.username || !credentials.password) throw new Error('Cannot create seed user, no credentials specified')
+
     const user = await prisma.user.upsert({
-        where: { username: 'testman' },
+        where: { username: credentials.username },
         create: {
-            username: 'testman',
-            password: await bcrypt.hash('topsecret', 10),
+            username: credentials.username,
+            password: await bcrypt.hash(credentials.password, 10),
         },
         update: {}
     })

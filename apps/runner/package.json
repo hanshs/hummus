@@ -4,14 +4,19 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "tsx watch index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "pnpm with-env tsx watch index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "with-env": "dotenv -e ../../.env --"
   },
   "keywords": [],
   "author": "Hans Starkopf",
   "license": "ISC",
   "devDependencies": {
     "@hummus/api": "workspace:*",
+    "@playwright/test": "^1.30.0",
+    "abort-controller": "^3.0.0",
+    "api": "^5.0.7",
+    "dotenv-cli": "^6.0.0",
     "tsx": "^3.12.2"
   },
   "dependencies": {

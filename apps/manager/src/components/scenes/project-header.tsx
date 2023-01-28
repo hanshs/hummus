@@ -22,7 +22,7 @@ export default function ProjectHeader() {
       isCurrent: router.asPath.includes("parameters"),
     },
   ];
-  console.log(routes);
+
   return (
     <>
       <h1 className="mb-6 text-xl font-semibold">{project.data?.name}</h1>

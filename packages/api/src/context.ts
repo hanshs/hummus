@@ -8,8 +8,20 @@ import { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
  * @link https://trpc.io/docs/context
  */
 export const createContext = async (opts: CreateNextContextOptions | CreateHTTPContextOptions) => {
+    const token = opts.req.headers.authorization
+
+    if (token) {
+        const user = await prisma.user.findFirst({ where: { accessToken: token } })
+        if (user) {
+            return {
+                session: { isLoggedIn: true, username: user.username, userId: user.id, token },
+                prisma
+            }
+        }
+    }
+
     const session = await getServerSession(opts.req, opts.res)
-    console.log(opts.req.headers.authorization)
+
     return {
         session,
         prisma
