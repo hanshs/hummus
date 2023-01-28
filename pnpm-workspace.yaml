@@ -1,7 +1,5 @@
 packages:
-  - apps/manager
-  - apps/runner
+  - packages/manager
+  - packages/runner
   - packages/api
-  - packages/auth
   - packages/db
-  - packages/config/*
