@@ -4,8 +4,8 @@
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
-    "clean": "rimraf .turbo ./node_modules",
     "dev": "tsx watch ./src/server",
+    "clean": "rimraf .turbo node_modules --impl=native",
     "lint": "eslint",
     "type-check": "tsc --noEmit"
   },

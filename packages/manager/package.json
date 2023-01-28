@@ -2,9 +2,9 @@
   "name": "@hummus/manager",
   "author": "Hans Starkopf",
   "scripts": {
-    "build": "pnpm with-env next build",
-    "clean": "rimraf .next .turbo node_modules",
     "dev": "pnpm with-env next dev",
+    "build": "pnpm with-env next build",
+    "clean": "rimraf .next .turbo node_modules --impl=native",
     "lint": "SKIP_ENV_VALIDATION=1 next lint",
     "type-check": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --"

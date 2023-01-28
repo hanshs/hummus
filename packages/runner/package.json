@@ -4,9 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "pnpm with-env tsx watch index.ts",
+    "clean": "rimraf .turbo node_modules --impl=native",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "with-env": "dotenv -e ../../.env --",
-    "clean": "rimraf .turbo node_modules"
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@hummus/api": "workspace:*",
