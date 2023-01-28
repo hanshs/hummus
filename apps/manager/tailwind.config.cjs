@@ -1,4 +1,8 @@
 /** @type {import("tailwindcss").Config} */
 module.exports = {
-  presets: [require("@hummus/tailwind-config")],
+  content: ["./src/**/*.{ts,tsx}", "./src/_app.tsx"],
+  theme: {
+    extend: {},
+  },
+  plugins: [require("@tailwindcss/forms")],
 };
