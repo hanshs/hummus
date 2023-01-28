@@ -1,9 +1,8 @@
-import { LogOutIcon, LucideLogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React from "react";
-import { LogOut } from "react-feather";
 import { api } from "../utils/api";
 
 export default function Layout(props: React.PropsWithChildren) {

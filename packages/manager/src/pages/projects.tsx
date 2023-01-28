@@ -1,5 +1,5 @@
+import { ExternalLink } from "lucide-react";
 import Link from "next/link";
-import { ExternalLink } from "react-feather";
 import { api } from "../utils/api";
 import { withSession } from "../utils/session";
 interface CreateProjectForm extends HTMLFormElement {
