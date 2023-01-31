@@ -1,10 +1,10 @@
-import { ExternalLink } from "lucide-react";
-import Link from "next/link";
-import { api } from "../utils/api";
-import { withSession } from "../utils/session";
+import { ExternalLink } from 'lucide-react';
+import Link from 'next/link';
+import { api } from '../utils/api';
+import { withSession } from '../utils/session';
 interface CreateProjectForm extends HTMLFormElement {
   readonly elements: HTMLFormControlsCollection & {
-    "hummus-project-name": HTMLInputElement;
+    'hummus-project-name': HTMLInputElement;
   };
 }
 export default function ProjectsPage() {
@@ -16,7 +16,7 @@ export default function ProjectsPage() {
     e.preventDefault();
     create.mutate(
       {
-        name: e.currentTarget.elements["hummus-project-name"].value,
+        name: e.currentTarget.elements['hummus-project-name'].value,
       },
       {
         onSuccess: () => {
@@ -55,20 +55,12 @@ export default function ProjectsPage() {
       <form onSubmit={onCreateProject} className="w-full basis-1/3">
         <h2 className="mb-4 text-lg font-semibold">Create new project</h2>
         <div className="items-between flex justify-between gap-2">
-          <input
-            className="form-input"
-            required
-            type="text"
-            placeholder="Project name"
-            name="hummus-project-name"
-          />
+          <input className="form-input" required type="text" placeholder="Project name" name="hummus-project-name" />
           <button className="button-primary" type="submit">
             Create
           </button>
         </div>
-        {projects.error && (
-          <span className="text-orange-700">{projects.error.message}</span>
-        )}
+        {projects.error && <span className="text-orange-700">{projects.error.message}</span>}
       </form>
     </div>
   );
@@ -77,7 +69,7 @@ export default function ProjectsPage() {
 export const getServerSideProps = withSession({
   onLoggedOut: {
     redirect: {
-      destination: "/",
+      destination: '/',
       permanent: false,
     },
   },

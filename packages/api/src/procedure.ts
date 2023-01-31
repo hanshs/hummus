@@ -1,6 +1,5 @@
-import { enforceAuth } from "./middleware";
-import { trpc } from "./trpc";
-
+import { enforceAuth } from './middleware';
+import { trpc } from './trpc';
 
 /**
  * Protected (authed) procedure

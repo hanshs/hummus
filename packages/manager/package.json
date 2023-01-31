@@ -6,7 +6,7 @@
     "dev": "yarn with-env next dev",
     "build": "yarn with-env next build",
     "clean": "rimraf .next .turbo node_modules --impl=native",
-    "lint": "SKIP_ENV_VALIDATION=1 next lint",
+    "lint": "set SKIP_ENV_VALIDATION=1 next lint",
     "type-check": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --"
   },

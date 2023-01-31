@@ -1,12 +1,12 @@
-import { api } from "../utils/api";
-import React from "react";
-import { useRouter } from "next/router";
-import { withSession } from "../utils/session";
+import { api } from '../utils/api';
+import React from 'react';
+import { useRouter } from 'next/router';
+import { withSession } from '../utils/session';
 
 interface AuthenticationForm extends HTMLFormElement {
   readonly elements: HTMLFormControlsCollection & {
-    "hummus-username": HTMLInputElement;
-    "hummus-password": HTMLInputElement;
+    'hummus-username': HTMLInputElement;
+    'hummus-password': HTMLInputElement;
   };
 }
 
@@ -19,13 +19,12 @@ export default function Home() {
   const onSubmit = (e: React.FormEvent<AuthenticationForm>) => {
     e.preventDefault();
 
-    const username = e.currentTarget.elements["hummus-username"].value;
-    const password = e.currentTarget.elements["hummus-password"].value;
+    const username = e.currentTarget.elements['hummus-username'].value;
+    const password = e.currentTarget.elements['hummus-password'].value;
 
-    const submitter = (e.nativeEvent as SubmitEvent)
-      .submitter as HTMLButtonElement;
+    const submitter = (e.nativeEvent as SubmitEvent).submitter as HTMLButtonElement;
 
-    if (submitter.name === "signup") {
+    if (submitter.name === 'signup') {
       signup.mutate(
         { username, password },
         {
@@ -44,7 +43,7 @@ export default function Home() {
       {
         onSuccess: async () => {
           await context.auth.getSession.invalidate();
-          router.push("/projects");
+          router.push('/projects');
         },
       },
     );
@@ -56,30 +55,14 @@ export default function Home() {
       onSubmit={onSubmit}
     >
       <div className="w-full space-y-2">
-        <input
-          type="text"
-          name="hummus-username"
-          required
-          placeholder="Username"
-          className="form-input"
-        />
-        <input
-          type="password"
-          name="hummus-password"
-          required
-          placeholder="Password"
-          className="form-input"
-        />
+        <input type="text" name="hummus-username" required placeholder="Username" className="form-input" />
+        <input type="password" name="hummus-password" required placeholder="Password" className="form-input" />
       </div>
       <div className="w-full space-y-2">
         <button name="login" className="button-primary w-full" value="login">
           Log in
         </button>
-        <button
-          name="signup"
-          className="button-secondary w-full"
-          value="signup"
-        >
+        <button name="signup" className="button-secondary w-full" value="signup">
           Sign up
         </button>
       </div>
@@ -93,7 +76,7 @@ export default function Home() {
 export const getServerSideProps = withSession({
   onLoggedIn: {
     redirect: {
-      destination: "/projects",
+      destination: '/projects',
       permanent: false,
     },
   },

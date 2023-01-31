@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { api } from "../../utils/api";
-import { Button } from "../ui/button";
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { api } from '../../utils/api';
+import { Button } from '../ui/button';
 
 export default function ProjectHeader() {
   const router = useRouter();
@@ -12,14 +12,14 @@ export default function ProjectHeader() {
 
   const routes = [
     {
-      name: "Features",
+      name: 'Features',
       href: `/project/${projectId}/features`,
-      isCurrent: router.asPath.includes("features"),
+      isCurrent: router.asPath.includes('features'),
     },
     {
-      name: "Parameters",
+      name: 'Parameters',
       href: `/project/${projectId}/parameters`,
-      isCurrent: router.asPath.includes("parameters"),
+      isCurrent: router.asPath.includes('parameters'),
     },
   ];
 
@@ -31,7 +31,7 @@ export default function ProjectHeader() {
           <Link key={route.href} href={route.href}>
             <Button
               size="sm"
-              variant={route.isCurrent ? "subtle" : "ghost"}
+              variant={route.isCurrent ? 'subtle' : 'ghost'}
               // className="rounded-lg bg-slate-100 px-2.5 py-1.5 font-medium"
               value="features"
             >

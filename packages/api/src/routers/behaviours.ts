@@ -1,13 +1,13 @@
-import { protectedProcedure } from "../procedure";
-import { trpc } from "../trpc";
+import { protectedProcedure } from '../procedure';
+import { trpc } from '../trpc';
 
 export const behavioursRouter = trpc.router({
-    all: protectedProcedure.query(({ ctx }) => {
-        return ctx.prisma.behaviour.findMany({
-            select: {
-                id: true,
-                value: true
-            }
-        });
-    }),
+  all: protectedProcedure.query(({ ctx }) => {
+    return ctx.prisma.behaviour.findMany({
+      select: {
+        id: true,
+        value: true,
+      },
+    });
+  }),
 });

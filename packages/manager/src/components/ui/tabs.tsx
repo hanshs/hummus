@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import * as TabsPrimivite from "@radix-ui/react-tabs";
-import cn from "../../utils/cn";
+import * as React from 'react';
+import * as TabsPrimivite from '@radix-ui/react-tabs';
+import cn from '../../utils/cn';
 
 const Tabs = TabsPrimivite.Root;
 
@@ -12,10 +12,7 @@ const TabsList = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimivite.List
     ref={ref}
-    className={cn(
-      "inline-flex items-center justify-center rounded-md bg-slate-100 p-1 dark:bg-slate-800",
-      className,
-    )}
+    className={cn('inline-flex items-center justify-center rounded-md bg-slate-100 p-1 dark:bg-slate-800', className)}
     {...props}
   />
 ));
@@ -27,7 +24,7 @@ const TabsTrigger = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <TabsPrimivite.Trigger
     className={cn(
-      "inline-flex min-w-[100px] items-center justify-center rounded-[0.185rem] px-3 py-1.5  text-sm font-medium text-slate-700 transition-all  disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm dark:text-slate-200 dark:data-[state=active]:bg-slate-900",
+      'inline-flex min-w-[100px] items-center justify-center rounded-[0.185rem] px-3 py-1.5  text-sm font-medium text-slate-700 transition-all  disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm dark:text-slate-200 dark:data-[state=active]:bg-slate-900',
       className,
     )}
     {...props}
@@ -41,10 +38,7 @@ const TabsContent = React.forwardRef<
   React.ComponentPropsWithoutRef<typeof TabsPrimivite.Content>
 >(({ className, ...props }, ref) => (
   <TabsPrimivite.Content
-    className={cn(
-      "mt-2 rounded-md border border-slate-200 p-6 dark:border-slate-700",
-      className,
-    )}
+    className={cn('mt-2 rounded-md border border-slate-200 p-6 dark:border-slate-700', className)}
     {...props}
     ref={ref}
   />

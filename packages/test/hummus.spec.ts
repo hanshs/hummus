@@ -1,9 +1,7 @@
-
-
-import { test, expect } from "@playwright/test";
+import { test, expect } from '@playwright/test';
 // import fs from 'fs/promises';
-import project from './generated.json'
-import { Project, testProject } from "./src/runners";
+import project from './generated.json';
+import { Project, testProject } from './src/runners';
 
 // An import assertion in a dynamic import
 // const { default: project } = await import("./generated.json", {
@@ -12,13 +10,11 @@ import { Project, testProject } from "./src/runners";
 //     },
 // });
 
-
-
 const projectTest = test.extend<{ project: Project }>({
-    project
+  project,
 });
 
-testProject(project)
+testProject(project);
 // })
 // projectTest('Project should conform to requirements', ({ project }) => {
 //     // testProject(project)

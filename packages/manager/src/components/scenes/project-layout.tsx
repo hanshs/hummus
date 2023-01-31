@@ -1,5 +1,5 @@
-import React from "react";
-import ProjectHeader from "./project-header";
+import React from 'react';
+import ProjectHeader from './project-header';
 
 export default function ProjectLayout(props: React.PropsWithChildren<{}>) {
   return (

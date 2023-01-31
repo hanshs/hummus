@@ -1,9 +1,9 @@
-import { Page } from "@playwright/test";
+import { Page } from '@playwright/test';
 
 export async function navigateToPage(page: Page, destination: string) {
-	const url = new URL(destination);
+  const url = new URL(destination);
 
-	await page.goto(url.href);
+  await page.goto(url.href);
 }
 
 // export const currentPathMatchesPageId = (page: Page, pageId: string) => {
