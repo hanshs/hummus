@@ -1,6 +1,6 @@
 import { prisma } from "@hummus/db";
 import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
+import type { CreateHTTPContextOptions } from "@trpc/server/adapters/standalone";
 import { getIronSession } from "iron-session";
 import { sessionOptions } from "./session";
 
@@ -13,6 +13,7 @@ export const createContext = async (opts: CreateNextContextOptions | CreateHTTPC
 
     if (token) {
         const user = await prisma.user.findFirst({ where: { accessToken: token } })
+
         if (user) {
             return {
                 session: { isLoggedIn: true, username: user.username, userId: user.id, token },

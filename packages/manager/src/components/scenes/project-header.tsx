@@ -28,7 +28,7 @@ export default function ProjectHeader() {
       <h1 className="mb-6 text-xl font-semibold">{project.data?.name}</h1>
       <div className="space-x-1">
         {routes.map((route) => (
-          <Link href={route.href}>
+          <Link key={route.href} href={route.href}>
             <Button
               size="sm"
               variant={route.isCurrent ? "subtle" : "ghost"}

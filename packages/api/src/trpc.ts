@@ -7,6 +7,6 @@ import { createContext } from "./context";
 export const trpc = initTRPC.context<typeof createContext>().create({
   transformer,
   errorFormatter({ shape }) {
-    return shape;
+    return shape.message;
   },
 });
