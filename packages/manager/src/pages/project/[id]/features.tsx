@@ -17,7 +17,7 @@ import {
 import { ChevronUp, ChevronDown, ChevronRight, Delete } from 'lucide-react';
 import { moveArrayElement } from '../../../utils/array';
 import Link from 'next/link';
-import ProjectHeader from '../../../components/scenes/project-header';
+import Tabs from '../../../components/ui/tabs';
 import ProjectLayout from '../../../components/scenes/project-layout';
 
 type Project = NonNullable<RouterOutputs['projects']['byId']>;
@@ -85,7 +85,7 @@ export default function ProjectPage() {
           New feature
         </Button>
       </div>
-      <div className="w-full px-12 py-6">
+      <div className="w-full px-12 py-4">
         {selectedFeature && <Feature feature={selectedFeature} key={`${selectedFeatureId}`} />}
       </div>
     </ProjectLayout>
@@ -98,6 +98,17 @@ function Feature(props: { feature: Feature }) {
   const updateFeature = api.features.update.useMutation();
   const addScenario = api.scenarios.create.useMutation();
   const error = addScenario.error || updateFeature.error;
+  const [tabs, setTabs] = React.useState([
+    {
+      name: 'Feature',
+      isCurrent: true,
+    },
+    {
+      name: 'Parameters',
+      isCurrent: false,
+    },
+  ]);
+  const selectedTab = tabs.find((tab) => tab.isCurrent)!.name;
 
   const save = useDebouncedCallback((data: FeatureUpdateData) => {
     updateFeature.mutate(
@@ -124,36 +135,102 @@ function Feature(props: { feature: Feature }) {
     );
   };
 
+  const onSelectTab = (t: String) =>
+    setTabs((s) => s.map((tab) => (t === tab.name ? { ...tab, isCurrent: true } : { ...tab, isCurrent: false })));
+
+  const sortedParams = props.feature.params.reduce<Record<string, Param[]>>((acc, param) => {
+    acc[param.type.type] ??= [];
+    acc[param.type.type]!.push(param);
+    return acc;
+  }, {});
+
   return (
     <div>
-      <label className="mb-2 block text-lg font-semibold">Feature</label>
-      <input
-        className="form-input"
-        defaultValue={props.feature.title || ''}
-        onChange={(e) => save({ title: e.target.value })}
-      />
-      <label className="mb-2 mt-4 block text-lg font-semibold">Description</label>
-      <textarea
-        className="form-input"
-        defaultValue={props.feature.description || ''}
-        onChange={(e) => save({ description: e.target.value })}
-      />
-      <h2 className="mt-6 text-lg font-semibold">Scenarios</h2>
-      <ul className="mt-4 space-y-4">
-        {props.feature.scenarios.length ? (
-          props.feature.scenarios.map((scenario) => (
-            <li key={scenario.id}>
-              <Scenario scenario={scenario} key={scenario.id} />
-            </li>
-          ))
-        ) : (
-          <p>This feature has no scenarios.</p>
-        )}
-      </ul>
-      {error && error.message}
-      <Button className="mt-4" variant="subtle" onClick={onAddScenario}>
-        Add scenario
-      </Button>
+      <Tabs tabs={tabs} onSelectTab={onSelectTab} />
+      {selectedTab === 'Feature' && (
+        <>
+          <label className="mb-2 mt-6 block text-lg font-semibold">Feature</label>
+          <input
+            className="form-input"
+            defaultValue={props.feature.title || ''}
+            onChange={(e) => save({ title: e.target.value })}
+          />
+          <label className="mb-2 mt-4 block text-lg font-semibold">Description</label>
+          <textarea
+            className="form-input"
+            defaultValue={props.feature.description || ''}
+            onChange={(e) => save({ description: e.target.value })}
+          />
+          <h2 className="mt-6 text-lg font-semibold">Scenarios</h2>
+          <ul className="mt-4 space-y-4">
+            {props.feature.scenarios.length ? (
+              props.feature.scenarios.map((scenario) => (
+                <li key={scenario.id}>
+                  <Scenario scenario={scenario} key={scenario.id} />
+                </li>
+              ))
+            ) : (
+              <p>This feature has no scenarios.</p>
+            )}
+          </ul>
+          {error && error.message}
+          <Button className="mt-4" variant="subtle" onClick={onAddScenario}>
+            Add scenario
+          </Button>
+        </>
+      )}
+      {selectedTab === 'Parameters' && (
+        <>
+          <h2 className="mt-6 text-lg font-semibold ">Parameters</h2>
+          <div className="mt-6 flex">
+            <div className="basis-1/2 space-y-6">
+              {props.feature.params.length ? (
+                Object.entries(sortedParams).map(([type, params]) => {
+                  return (
+                    <ul className="space-y-4">
+                      <h3 className="text-lg text-blue-700">{type}</h3>
+                      {params.map((param) => {
+                        return (
+                          <li key={param.id}>
+                            {param.name}
+                            {param.value}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  );
+                })
+              ) : (
+                <p>This feature has no parameters.</p>
+              )}
+            </div>
+            <div className="basis-1/2 space-y-6">
+              <h4>New parameter</h4>
+              <div className="mt-6 flex flex-col space-y-4 rounded-lg border bg-slate-50 px-6 py-4">
+                <div className="space-y-1">
+                  <label className="block text-sm text-slate-400">Name</label>
+                  <input className="form-input" placeholder={`eg. "login button"`} />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-sm text-slate-400">Value</label>
+                  <input className="form-input" placeholder={`eg. "data-test=['login-btn']"`} />
+                </div>
+                <div className="space-y-1">
+                  <label className="block text-sm text-slate-400">Type</label>
+                  <select className="form-input">
+                    {Object.keys(sortedParams).map((type) => (
+                      <option>{type}</option>
+                    ))}
+                  </select>
+                </div>
+                <Button variant="outline" size="sm" className="ml-auto">
+                  Add
+                </Button>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

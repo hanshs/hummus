@@ -49,6 +49,11 @@ export const projectsRouter = trpc.router({
                 },
               },
             },
+            params: {
+              include: {
+                type: true,
+              },
+            },
           },
         },
       },

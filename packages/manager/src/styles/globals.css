@@ -4,7 +4,7 @@
 
 .form-input,
 .form-select {
-  @apply w-full rounded border-gray-300 focus:ring focus:ring-slate-400 focus:ring-opacity-50;
+  @apply w-full rounded px-2 py-1 outline-0 ring-1 focus:border-0 focus:ring focus:ring-opacity-50;
 }
 
 .button-primary {

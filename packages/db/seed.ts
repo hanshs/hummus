@@ -1,4 +1,4 @@
-import { prisma } from './index';
+import { Feature, prisma, Project, User } from './index';
 import bcrypt from 'bcrypt';
 
 async function empty() {
@@ -47,7 +47,8 @@ const steps = [
     params: [{ name: 'dashboard page', value: '/dashboard', type: paramType.location }],
   },
 ];
-async function upsertParamTypes() {
+
+function upsertParamTypes() {
   const transactions = [];
 
   for (const type in paramType) {
@@ -60,9 +61,10 @@ async function upsertParamTypes() {
     );
   }
 
-  await prisma.$transaction(transactions);
+  return prisma.$transaction(transactions);
 }
-async function upsertParams() {
+
+function upsertParams(feature: Feature) {
   const transactions = [];
 
   for (const step of steps) {
@@ -70,14 +72,19 @@ async function upsertParams() {
       transactions.push(
         prisma.param.upsert({
           where: { value: param.value },
-          create: { name: param.name, value: param.value, type: { connect: { type: param.type } } },
+          create: {
+            name: param.name,
+            value: param.value,
+            type: { connect: { type: param.type } },
+            feature: { connect: { id: feature.id } },
+          },
           update: {},
         }),
       );
     }
   }
 
-  return await prisma.$transaction(transactions);
+  return prisma.$transaction(transactions);
 }
 
 async function upsertBehaviours() {
@@ -96,30 +103,8 @@ async function upsertBehaviours() {
   return await prisma.$transaction(transactions);
 }
 
-const credentials = {
-  username: process.env.SEED_USER_USERNAME,
-  password: process.env.SEED_USER_PASSWORD,
-};
-
-async function seed() {
-  await empty();
-  await upsertParamTypes();
-  await upsertParams();
-  await upsertBehaviours();
-
-  if (!credentials.username || !credentials.password)
-    throw new Error('Cannot create seed user, no credentials specified');
-
-  const user = await prisma.user.upsert({
-    where: { username: credentials.username },
-    create: {
-      username: credentials.username,
-      password: await bcrypt.hash(credentials.password, 10),
-    },
-    update: {},
-  });
-
-  const project = await prisma.project.upsert({
+function upsertProject(user: User) {
+  return prisma.project.upsert({
     where: { id: 'seed-project-id' },
     create: {
       id: 'seed-project-id',
@@ -128,8 +113,10 @@ async function seed() {
     },
     update: {},
   });
+}
 
-  const feature = await prisma.feature.upsert({
+function upsertFeature(project: Project) {
+  return prisma.feature.upsert({
     where: { id: 'seed-feature-id' },
     create: {
       id: 'seed-feature-id',
@@ -139,8 +126,30 @@ async function seed() {
     },
     update: {},
   });
+}
 
-  await prisma.scenario.upsert({
+async function upsertUser() {
+  const credentials = {
+    username: process.env.SEED_USER_USERNAME,
+    password: process.env.SEED_USER_PASSWORD,
+  };
+
+  if (!credentials.username || !credentials.password) {
+    throw new Error('Cannot create seed user, no credentials specified');
+  }
+
+  return prisma.user.upsert({
+    where: { username: credentials.username },
+    create: {
+      username: credentials.username,
+      password: await bcrypt.hash(credentials.password, 10),
+    },
+    update: {},
+  });
+}
+
+function upsertScenario(feature: Feature) {
+  return prisma.scenario.upsert({
     where: { id: 1 },
     create: {
       name: 'User can log in',
@@ -155,6 +164,19 @@ async function seed() {
     },
     update: {},
   });
+}
+
+async function seed() {
+  await empty();
+  await upsertParamTypes();
+  await upsertBehaviours();
+
+  const user = await upsertUser();
+  const project = await upsertProject(user);
+  const feature = await upsertFeature(project);
+
+  await upsertParams(feature);
+  await upsertScenario(feature);
 }
 seed()
   .then(async () => {
