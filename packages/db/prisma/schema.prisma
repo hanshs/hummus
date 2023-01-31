@@ -1,5 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// https://pris.ly/d/prisma-schema
 
 generator client {
     provider = "prisma-client-js"
@@ -89,15 +88,6 @@ model Step {
     @@index([behaviourId])
 }
 
-// TODO behaviour peab olema eraldi entity vist, kuis behaviouri tekst on @unique
-// ja võimalik et Actionit ei ole vaja vaid Stepi küljes on Behaviour ja Params
-// model Action {
-//     id        Int       @id @default(autoincrement())
-//     behaviour Behaviour
-//     params    Param[]
-//     steps     Step[]
-// }
-
 model Behaviour {
     id    Int    @id @default(autoincrement())
     value String @unique
@@ -119,6 +109,7 @@ model Param {
     @@index([featureId])
 }
 
+// TODO seda ei ole vaja
 model ParamType {
     id     Int     @id @default(autoincrement())
     type   String  @unique
