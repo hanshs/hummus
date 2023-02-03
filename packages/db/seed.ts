@@ -8,7 +8,6 @@ async function empty() {
   await prisma.scenario.deleteMany();
   await prisma.step.deleteMany();
   await prisma.param.deleteMany();
-  await prisma.paramType.deleteMany();
   await prisma.behaviour.deleteMany();
   await prisma.userOnProject.deleteMany();
 }
@@ -48,22 +47,6 @@ const steps = [
   },
 ];
 
-function upsertParamTypes() {
-  const transactions = [];
-
-  for (const type in paramType) {
-    transactions.push(
-      prisma.paramType.upsert({
-        where: { type },
-        create: { type },
-        update: {},
-      }),
-    );
-  }
-
-  return prisma.$transaction(transactions);
-}
-
 function upsertParams(feature: Feature) {
   const transactions = [];
 
@@ -75,7 +58,7 @@ function upsertParams(feature: Feature) {
           create: {
             name: param.name,
             value: param.value,
-            type: { connect: { type: param.type } },
+            type: param.type,
             feature: { connect: { id: feature.id } },
           },
           update: {},
@@ -168,7 +151,7 @@ function upsertScenario(feature: Feature) {
 
 async function seed() {
   await empty();
-  await upsertParamTypes();
+
   await upsertBehaviours();
 
   const user = await upsertUser();

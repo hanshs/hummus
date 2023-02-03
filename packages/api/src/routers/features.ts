@@ -6,6 +6,7 @@ export const featureRouter = trpc.router({
   all: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.feature.findMany({ where: {} });
   }),
+  // byParamId: protectedProcedure.input(z.object({paramId: z.number()})).query()
   create: protectedProcedure.input(z.object({ projectId: z.string() })).mutation(({ input, ctx }) => {
     return ctx.prisma.feature.create({
       data: {

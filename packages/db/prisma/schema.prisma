@@ -33,11 +33,11 @@ model User {
 }
 
 model Project {
-    id   String @id @default(uuid())
-    name String
-
-    users    UserOnProject[]
-    features Feature[]
+    id         String          @id @default(uuid())
+    name       String
+    users      UserOnProject[]
+    features   Feature[]
+    behaviours Behaviour[]
 }
 
 model UserOnProject {
@@ -64,10 +64,9 @@ model Feature {
 }
 
 model Scenario {
-    id    Int     @id @default(autoincrement())
-    name  String?
-    steps Step[]
-
+    id        Int     @id @default(autoincrement())
+    name      String?
+    steps     Step[]
     feature   Feature @relation(fields: [featureId], references: [id])
     featureId String
 
@@ -89,29 +88,23 @@ model Step {
 }
 
 model Behaviour {
-    id    Int    @id @default(autoincrement())
-    value String @unique
-    Step  Step[]
+    id        Int      @id @default(autoincrement())
+    value     String   @unique
+    project   Project? @relation(fields: [projectId], references: [id])
+    Step      Step[]
+    projectId String?
+
+    @@index([projectId])
 }
 
 model Param {
-    id      Int       @id @default(autoincrement())
-    name    String    @unique
-    value   String    @unique
-    steps   Step[]
-    type    ParamType @relation(fields: [paramTypeId], references: [id])
-    feature Feature   @relation(fields: [featureId], references: [id])
+    id        Int     @id @default(autoincrement())
+    name      String  @unique
+    value     String  @unique
+    type      String
+    steps     Step[]
+    feature   Feature @relation(fields: [featureId], references: [id])
+    featureId String
 
-    paramTypeId Int
-    featureId   String
-
-    @@index([paramTypeId])
     @@index([featureId])
-}
-
-// TODO seda ei ole vaja
-model ParamType {
-    id     Int     @id @default(autoincrement())
-    type   String  @unique
-    params Param[]
 }

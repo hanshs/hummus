@@ -40,18 +40,14 @@ export const projectsRouter = trpc.router({
                 steps: {
                   include: {
                     behaviour: true,
-                    params: {
-                      include: {
-                        type: true,
-                      },
-                    },
+                    params: true,
                   },
                 },
               },
             },
             params: {
               include: {
-                type: true,
+                steps: true,
               },
             },
           },

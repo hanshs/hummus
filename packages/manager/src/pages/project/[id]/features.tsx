@@ -14,9 +14,8 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '../../../components/ui/dropdown';
-import { ChevronUp, ChevronDown, ChevronRight, Delete } from 'lucide-react';
+import { ChevronUp, ChevronDown, ChevronRight, Delete, Trash2 } from 'lucide-react';
 import { moveArrayElement } from '../../../utils/array';
-import Link from 'next/link';
 import Tabs from '../../../components/ui/tabs';
 import ProjectLayout from '../../../components/scenes/project-layout';
 
@@ -24,7 +23,7 @@ type Project = NonNullable<RouterOutputs['projects']['byId']>;
 type Feature = Project['features'][number];
 type Scenario = Feature['scenarios'][number];
 type Step = Scenario['steps'][number];
-type Param = Step['params'][number];
+type Param = Feature['params'][number];
 
 export default function ProjectPage() {
   const context = api.useContext();
@@ -93,11 +92,6 @@ export default function ProjectPage() {
 }
 
 function Feature(props: { feature: Feature }) {
-  type FeatureUpdateData = RouterInputs['features']['update']['data'];
-  const context = api.useContext();
-  const updateFeature = api.features.update.useMutation();
-  const addScenario = api.scenarios.create.useMutation();
-  const error = addScenario.error || updateFeature.error;
   const [tabs, setTabs] = React.useState([
     {
       name: 'Feature',
@@ -110,6 +104,25 @@ function Feature(props: { feature: Feature }) {
   ]);
   const selectedTab = tabs.find((tab) => tab.isCurrent)!.name;
 
+  const onSelectTab = (t: String) =>
+    setTabs((s) => s.map((tab) => (t === tab.name ? { ...tab, isCurrent: true } : { ...tab, isCurrent: false })));
+
+  return (
+    <div>
+      <Tabs tabs={tabs} onSelectTab={onSelectTab} />
+      {selectedTab === 'Feature' && <FeatureTab feature={props.feature} />}
+      {selectedTab === 'Parameters' && <ParamsTab feature={props.feature} />}
+    </div>
+  );
+}
+
+function FeatureTab(props: { feature: Feature }) {
+  type FeatureUpdateData = RouterInputs['features']['update']['data'];
+  const context = api.useContext();
+  const updateFeature = api.features.update.useMutation();
+  const addScenario = api.scenarios.create.useMutation();
+
+  const error = updateFeature.error;
   const save = useDebouncedCallback((data: FeatureUpdateData) => {
     updateFeature.mutate(
       {
@@ -135,104 +148,184 @@ function Feature(props: { feature: Feature }) {
     );
   };
 
-  const onSelectTab = (t: String) =>
-    setTabs((s) => s.map((tab) => (t === tab.name ? { ...tab, isCurrent: true } : { ...tab, isCurrent: false })));
+  return (
+    <>
+      <label className="mb-2 mt-6 block text-lg font-semibold">Feature</label>
+      <input
+        className="form-input"
+        defaultValue={props.feature.title || ''}
+        onChange={(e) => save({ title: e.target.value })}
+      />
+      <label className="mb-2 mt-4 block text-lg font-semibold">Description</label>
+      <textarea
+        className="form-input"
+        defaultValue={props.feature.description || ''}
+        onChange={(e) => save({ description: e.target.value })}
+      />
+      <h2 className="mt-6 text-lg font-semibold">Scenarios</h2>
+      <ul className="mt-4 space-y-4">
+        {props.feature.scenarios.length ? (
+          props.feature.scenarios.map((scenario) => (
+            <li key={scenario.id}>
+              <Scenario scenario={scenario} key={scenario.id} />
+            </li>
+          ))
+        ) : (
+          <p>This feature has no scenarios.</p>
+        )}
+      </ul>
+      {error && error.message}
+      <Button className="mt-4" variant="subtle" onClick={onAddScenario}>
+        Add scenario
+      </Button>
+    </>
+  );
+}
 
+function ParamsTab(props: { feature: Feature }) {
+  type ParamUpdateInput = RouterInputs['params']['update'];
+  interface CreateParamForm extends HTMLFormElement {
+    readonly elements: HTMLFormControlsCollection & {
+      'new-param-name': HTMLInputElement;
+      'new-param-value': HTMLInputElement;
+      'new-param-type': HTMLInputElement;
+    };
+  }
+  const context = api.useContext();
+  const createParam = api.params.create.useMutation();
+  const deleteParam = api.params.delete.useMutation();
+  const updateParam = api.params.update.useMutation();
   const sortedParams = props.feature.params.reduce<Record<string, Param[]>>((acc, param) => {
-    acc[param.type.type] ??= [];
-    acc[param.type.type]!.push(param);
+    acc[param.type] ??= [];
+    acc[param.type]!.push(param);
     return acc;
   }, {});
 
+  const onCreateParam = (e: React.FormEvent<CreateParamForm>) => {
+    e.preventDefault();
+
+    const { elements } = e.currentTarget;
+
+    createParam.mutate(
+      {
+        name: elements['new-param-name'].value,
+        value: elements['new-param-value'].value,
+        type: elements['new-param-type'].value,
+        featureId: props.feature.id,
+      },
+      {
+        onSuccess: () => {
+          context.projects.byId.invalidate();
+          (e.target as CreateParamForm).reset();
+        },
+      },
+    );
+  };
+
+  const onDeleteParam = (param: Param) => {
+    let confirm = true;
+    if (param.steps.length > 0) {
+      confirm = window.confirm(
+        `This parameter is used in ${param.steps.length} steps, are you sure you want to delete?`,
+      );
+    }
+    if (confirm) {
+      deleteParam.mutate(
+        { id: param.id },
+        {
+          onSuccess: () => context.projects.byId.invalidate(),
+        },
+      );
+    }
+  };
+
+  const save = useDebouncedCallback((data: ParamUpdateInput) => {
+    updateParam.mutate(data, { onSuccess: () => context.projects.byId.invalidate() });
+  }, 1000);
+
   return (
-    <div>
-      <Tabs tabs={tabs} onSelectTab={onSelectTab} />
-      {selectedTab === 'Feature' && (
-        <>
-          <label className="mb-2 mt-6 block text-lg font-semibold">Feature</label>
-          <input
-            className="form-input"
-            defaultValue={props.feature.title || ''}
-            onChange={(e) => save({ title: e.target.value })}
-          />
-          <label className="mb-2 mt-4 block text-lg font-semibold">Description</label>
-          <textarea
-            className="form-input"
-            defaultValue={props.feature.description || ''}
-            onChange={(e) => save({ description: e.target.value })}
-          />
-          <h2 className="mt-6 text-lg font-semibold">Scenarios</h2>
-          <ul className="mt-4 space-y-4">
-            {props.feature.scenarios.length ? (
-              props.feature.scenarios.map((scenario) => (
-                <li key={scenario.id}>
-                  <Scenario scenario={scenario} key={scenario.id} />
-                </li>
-              ))
-            ) : (
-              <p>This feature has no scenarios.</p>
-            )}
-          </ul>
-          {error && error.message}
-          <Button className="mt-4" variant="subtle" onClick={onAddScenario}>
-            Add scenario
-          </Button>
-        </>
-      )}
-      {selectedTab === 'Parameters' && (
-        <>
-          <h2 className="mt-6 text-lg font-semibold ">Parameters</h2>
-          <div className="mt-6 flex">
-            <div className="basis-1/2 space-y-6">
-              {props.feature.params.length ? (
-                Object.entries(sortedParams).map(([type, params]) => {
-                  return (
-                    <ul className="space-y-4">
-                      <h3 className="text-lg text-blue-700">{type}</h3>
-                      {params.map((param) => {
-                        return (
-                          <li key={param.id}>
-                            {param.name}
-                            {param.value}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  );
-                })
-              ) : (
-                <p>This feature has no parameters.</p>
-              )}
-            </div>
-            <div className="basis-1/2 space-y-6">
-              <h4>New parameter</h4>
-              <div className="mt-6 flex flex-col space-y-4 rounded-lg border bg-slate-50 px-6 py-4">
-                <div className="space-y-1">
-                  <label className="block text-sm text-slate-400">Name</label>
-                  <input className="form-input" placeholder={`eg. "login button"`} />
-                </div>
-                <div className="space-y-1">
-                  <label className="block text-sm text-slate-400">Value</label>
-                  <input className="form-input" placeholder={`eg. "data-test=['login-btn']"`} />
-                </div>
-                <div className="space-y-1">
-                  <label className="block text-sm text-slate-400">Type</label>
-                  <select className="form-input">
-                    {Object.keys(sortedParams).map((type) => (
-                      <option>{type}</option>
-                    ))}
-                  </select>
-                </div>
-                <Button variant="outline" size="sm" className="ml-auto">
-                  Add
-                </Button>
+    <>
+      <h2 className="mt-6 text-lg font-semibold ">Parameters</h2>
+      <div className="mt-6 flex">
+        <div className="basis-1/2 space-y-6 px-6">
+          {props.feature.params.length ? (
+            Object.entries(sortedParams).map(([type, params]) => {
+              return (
+                <ul className="">
+                  <h3 className="text-lg text-blue-700 underline">{type}</h3>
+                  {params.map((param) => (
+                    <li
+                      key={param.id}
+                      className={`group relative -ml-6 flex justify-between rounded-md py-1 pl-6 hover:bg-slate-50`}
+                    >
+                      <input
+                        className="font-medium"
+                        defaultValue={param.name}
+                        onChange={(e) => save({ param: { name: e.target.value, value: param.value }, id: param.id })}
+                      />
+                      <input
+                        className="ml-4 italic"
+                        defaultValue={param.value}
+                        onChange={(e) => save({ param: { name: param.name, value: e.target.value }, id: param.id })}
+                      />
+                      <button
+                        className="absolute -left-3 hidden hover:text-red-500 group-hover:block"
+                        onClick={() => onDeleteParam(param)}
+                      >
+                        <Trash2 />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              );
+            })
+          ) : (
+            <p>This feature has no parameters.</p>
+          )}
+        </div>
+        <div className="basis-1/2 space-y-6">
+          <h4>New parameter</h4>
+          <form onSubmit={onCreateParam}>
+            <fieldset
+              disabled={createParam.isLoading}
+              className="mt-6 flex flex-col space-y-4 rounded-lg border bg-slate-50 px-6 py-4 transition-all ease-in-out"
+            >
+              <div className="space-y-1">
+                <label className="block text-sm text-slate-400">Name</label>
+                <input required name="new-param-name" className="form-input" placeholder={`eg. "login button"`} />
               </div>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
+              <div className="space-y-1">
+                <label className="block text-sm text-slate-400">Value</label>
+                <input
+                  name="new-param-value"
+                  required
+                  className="form-input"
+                  placeholder={`eg. "data-test=['login-btn']"`}
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="block text-sm text-slate-400">Type</label>
+                <input required className="form-input" list="param-types" id="new-param-type" name="new-param-type" />
+                <datalist id="param-types">
+                  {Object.keys(sortedParams).map((type) => (
+                    <option value={type}>{type}</option>
+                  ))}
+                </datalist>
+              </div>
+              <Button variant="outline" size="sm" className="ml-auto">
+                Add
+              </Button>
+              {createParam.isError && 'Failed to create parameter with these values'}
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </>
   );
+}
+
+function BehavioursTab(props: { project: Project }) {
+  return <div>hello behaviours tab</div>;
 }
 
 function Scenario(props: { scenario: Scenario }) {
@@ -240,7 +333,7 @@ function Scenario(props: { scenario: Scenario }) {
   const context = api.useContext();
   const update = api.scenarios.update.useMutation();
 
-  const debouncedSave = useDebouncedCallback((data: ScenarioUpdateData) => {
+  const save = useDebouncedCallback((data: ScenarioUpdateData) => {
     update.mutate({ id: props.scenario.id, data }, { onSuccess: () => context.projects.byId.invalidate() });
   }, 1000);
 
@@ -250,7 +343,7 @@ function Scenario(props: { scenario: Scenario }) {
         className="form-input"
         defaultValue={props.scenario.name || ''}
         placeholder="Scenario name"
-        onChange={(e) => debouncedSave({ name: e.target.value })}
+        onChange={(e) => save({ name: e.target.value })}
       />
       <div className="mt-6 mb-4 font-medium">Steps</div>
       <Steps scenarioId={props.scenario.id} steps={props.scenario.steps} />
@@ -324,12 +417,8 @@ function Steps(props: { scenarioId: number; steps: Step[] }) {
     let behaviour: React.ReactNode[] | string = step.behaviour.value;
 
     for (const [index, param] of step.params.entries()) {
-      behaviour = reactStringReplace(behaviour, `<${param.type.type}>`, (_match, _i) => (
-        <ParamSelector
-          key={`${step.id}-${param.paramTypeId}-${index}`}
-          param={{ type: param.type.type, id: param.id }}
-          stepId={step.id}
-        >
+      behaviour = reactStringReplace(behaviour, `<${param.type}>`, (_match, _i) => (
+        <ParamSelector key={`${step.id}-${param.id}-${index}`} param={param} stepId={step.id}>
           {param.name}
         </ParamSelector>
       )) as React.ReactNode[];
@@ -365,7 +454,7 @@ function Steps(props: { scenarioId: number; steps: Step[] }) {
                 onMouseOver={() => setShowActions(index)}
                 onMouseLeave={() => setShowActions(undefined)}
               >
-                {step.order}. {getStepBehaviour(step)}
+                <span className="text-slate-400">{step.order}.</span> {getStepBehaviour(step)}
                 {showActions === index && (
                   <div className="absolute right-2 top-1 flex space-x-1">
                     <button className="hover:text-blue-400" title="Move up">
