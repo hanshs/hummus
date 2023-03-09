@@ -6,7 +6,7 @@ export const projectsRouter = trpc.router({
   all: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.project.findMany({
       where: {
-        users: { some: { userId: ctx.session.userId } },
+        users: { some: { id: ctx.session.userId } },
       },
     });
   }),
@@ -15,8 +15,8 @@ export const projectsRouter = trpc.router({
       data: {
         name: input.name,
         users: {
-          create: {
-            userId: ctx.session.userId,
+          connect: {
+            id: ctx.session.userId,
           },
         },
       },
@@ -28,7 +28,7 @@ export const projectsRouter = trpc.router({
         id: input,
         users: {
           some: {
-            userId: ctx.session.userId,
+            id: ctx.session.userId,
           },
         },
       },

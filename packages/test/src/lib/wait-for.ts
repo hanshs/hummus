@@ -1,3 +1,5 @@
+import { Page } from '@playwright/test';
+
 export async function waitFor<T>(
   predicate: () => T | Promise<T>,
   options: { timeout: number; interval: number } = { timeout: 10000, interval: 2000 },
@@ -15,4 +17,16 @@ export async function waitFor<T>(
   }
 
   throw new Error(`Wait time of ${options.timeout}ms exceeded`);
+}
+
+export async function waitForSelector(page: Page, selector: string, options: { timeout: number } = { timeout: 10000 }) {
+  try {
+    await page.waitForSelector(selector, {
+      state: 'visible',
+      timeout: options.timeout,
+    });
+    return true;
+  } catch (e) {
+    return false;
+  }
 }

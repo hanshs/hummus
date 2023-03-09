@@ -17,38 +17,28 @@ generator erd2 {
 }
 
 datasource db {
-    provider     = "mysql"
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
+    // provider     = "mysql"
+    provider = "postgres"
+    url      = env("DATABASE_URL")
+    // relationMode = "prisma"
 }
 
 model User {
-    id          String          @id @default(cuid())
-    username    String          @unique
+    id          String    @id @default(cuid())
+    username    String    @unique
     password    String
-    createdAt   DateTime        @default(now())
-    updatedAt   DateTime        @updatedAt
-    accessToken String          @unique @default(uuid())
-    projects    UserOnProject[]
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    accessToken String    @unique @default(uuid())
+    projects    Project[]
 }
 
 model Project {
-    id         String          @id @default(uuid())
+    id         String      @id @default(uuid())
     name       String
-    users      UserOnProject[]
+    users      User[]
     features   Feature[]
     behaviours Behaviour[]
-}
-
-model UserOnProject {
-    user      User    @relation(fields: [userId], references: [id])
-    userId    String
-    project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-    projectId String
-
-    @@id([projectId, userId])
-    @@index([projectId])
-    @@index([userId])
 }
 
 model Feature {
@@ -60,7 +50,7 @@ model Feature {
     project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
     projectId   String
 
-    @@index([projectId])
+    // @@index([projectId])
 }
 
 model Scenario {
@@ -70,7 +60,7 @@ model Scenario {
     feature   Feature @relation(fields: [featureId], references: [id])
     featureId String
 
-    @@index([featureId])
+    // @@index([featureId])
 }
 
 model Step {
@@ -83,18 +73,18 @@ model Step {
     behaviourId Int
     params      Param[]
 
-    @@index([scenarioId])
-    @@index([behaviourId])
+    // @@index([scenarioId])
+    // @@index([behaviourId])
 }
 
 model Behaviour {
     id        Int      @id @default(autoincrement())
     value     String   @unique
     project   Project? @relation(fields: [projectId], references: [id])
-    Step      Step[]
+    steps     Step[]
     projectId String?
 
-    @@index([projectId])
+    // @@index([projectId])
 }
 
 model Param {
@@ -106,5 +96,5 @@ model Param {
     feature   Feature @relation(fields: [featureId], references: [id])
     featureId String
 
-    @@index([featureId])
+    // @@index([featureId])
 }

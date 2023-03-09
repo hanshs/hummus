@@ -8,7 +8,7 @@ export default function Tabs(props: {
   className?: string;
 }) {
   return (
-    <div className={cn('-mx-12 space-x-2 border-b px-4 pb-4', props.className)}>
+    <div className={cn('space-x-2 border-b', props.className)}>
       {props.tabs.map((tab) => (
         <Button size="sm" variant={tab.isCurrent ? 'subtle' : 'ghost'} onClick={() => props.onSelectTab(tab.name)}>
           {tab.name}

@@ -9,7 +9,7 @@ async function empty() {
   await prisma.step.deleteMany();
   await prisma.param.deleteMany();
   await prisma.behaviour.deleteMany();
-  await prisma.userOnProject.deleteMany();
+  // await prisma.userOnProject.deleteMany();
 }
 
 const paramType = {
@@ -92,7 +92,7 @@ function upsertProject(user: User) {
     create: {
       id: 'seed-project-id',
       name: 'Seed project',
-      users: { create: { userId: user.id } },
+      users: { connect: { id: user.id } },
     },
     update: {},
   });

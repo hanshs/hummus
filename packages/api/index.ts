@@ -6,3 +6,4 @@ export { createContext } from './src/context';
 export { router };
 export type Router = typeof router;
 export type RouterOutputs = inferRouterOutputs<Router>;
+export type RouterInputs = inferRouterInputs<Router>;
