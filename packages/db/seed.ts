@@ -1,7 +1,29 @@
 import { Feature, prisma, Project, User } from './index';
 import bcrypt from 'bcrypt';
 
-async function empty() {
+seed()
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });
+
+async function seed() {
+  await deleteEverything();
+  await upsertBehaviours();
+
+  const user = await upsertUser();
+  const project = await upsertProject(user);
+  const feature = await upsertFeature(project);
+
+  await upsertParams(feature);
+  await upsertScenario(feature);
+}
+
+async function deleteEverything() {
   await prisma.project.deleteMany();
   await prisma.user.deleteMany();
   await prisma.feature.deleteMany();
@@ -18,32 +40,43 @@ const paramType = {
   text: 'text',
 };
 
+const behaviours = [
+  { id: 1, value: 'I am on <location>' },
+  { id: 2, value: 'I should be directed to <location>' },
+  { id: 3, value: 'I click on <selector>' },
+  { id: 4, value: 'I fill the <selector> with <text>' },
+  { id: 5, value: 'The <selector> should contain the <text>' },
+  { id: 6, value: 'The <selector> should not contain the <text>' },
+  { id: 7, value: 'The <selector> should be visible' },
+  { id: 8, value: 'The <selector> should not be visible' },
+];
+
 const steps = [
   {
-    behaviour: 'I am on <location>',
+    behaviour: 1,
     params: [{ name: 'login page', value: '/login', type: paramType.location }],
   },
   {
-    behaviour: 'I fill the <selector> with <text>',
+    behaviour: 4,
     params: [
       { name: 'username field', value: '[data-test="username-field"]', type: paramType.selector },
       { name: 'my username', value: 'testuser', type: paramType.text },
     ],
   },
   {
-    behaviour: 'I fill the <selector> with <text>',
+    behaviour: 4,
     params: [
       { name: 'password field', value: '[data-test="password-field"]', type: paramType.selector },
       { name: 'my password', value: 'mypassword', type: paramType.text },
     ],
   },
   {
-    behaviour: 'I click on <selector>',
+    behaviour: 4,
     params: [{ name: 'login button', value: '[data-test="login-button"]', type: paramType.selector }],
   },
   {
-    behaviour: 'I am directed to <location>',
-    params: [{ name: 'dashboard page', value: '/dashboard', type: paramType.location }],
+    behaviour: 2,
+    params: [{ name: 'projects page', value: '/projects', type: paramType.location }],
   },
 ];
 
@@ -73,12 +106,12 @@ function upsertParams(feature: Feature) {
 async function upsertBehaviours() {
   const transactions = [];
 
-  for (const step of steps) {
+  for (const behaviour of behaviours) {
     transactions.push(
       prisma.behaviour.upsert({
-        where: { value: step.behaviour },
-        create: { value: step.behaviour },
-        update: {},
+        where: { id: behaviour.id },
+        create: { id: behaviour.id, value: behaviour.value },
+        update: { value: behaviour.value },
       }),
     );
   }
@@ -139,7 +172,7 @@ function upsertScenario(feature: Feature) {
       steps: {
         create: steps.map((step, index) => ({
           order: index + 1,
-          behaviour: { connect: { value: step.behaviour } },
+          behaviour: { connect: { id: step.behaviour } },
           params: { connect: step.params.map((param) => ({ name: param.name })) },
         })),
       },
@@ -148,25 +181,3 @@ function upsertScenario(feature: Feature) {
     update: {},
   });
 }
-
-async function seed() {
-  await empty();
-
-  await upsertBehaviours();
-
-  const user = await upsertUser();
-  const project = await upsertProject(user);
-  const feature = await upsertFeature(project);
-
-  await upsertParams(feature);
-  await upsertScenario(feature);
-}
-seed()
-  .then(async () => {
-    await prisma.$disconnect();
-  })
-  .catch(async (e) => {
-    console.error(e);
-    await prisma.$disconnect();
-    process.exit(1);
-  });

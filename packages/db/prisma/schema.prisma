@@ -17,10 +17,11 @@ generator erd2 {
 }
 
 datasource db {
-    // provider     = "mysql"
-    provider = "postgres"
-    url      = env("DATABASE_URL")
-    // relationMode = "prisma"
+    provider = "mysql"
+    // provider = "postgres"
+
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
 model User {
@@ -47,10 +48,10 @@ model Feature {
     description String?
     scenarios   Scenario[]
     params      Param[]
-    project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+    project     Project    @relation(fields: [projectId], references: [id])
     projectId   String
 
-    // @@index([projectId])
+    @@index([projectId])
 }
 
 model Scenario {
@@ -60,21 +61,24 @@ model Scenario {
     feature   Feature @relation(fields: [featureId], references: [id])
     featureId String
 
-    // @@index([featureId])
+    @@index([featureId])
 }
 
 model Step {
-    id Int @id @default(autoincrement())
-
+    id          Int       @id @default(autoincrement())
     order       Int
-    scenario    Scenario  @relation(fields: [scenarioId], references: [id])
-    scenarioId  Int
-    behaviour   Behaviour @relation(fields: [behaviourId], references: [id])
-    behaviourId Int
     params      Param[]
+    scenario    Scenario  @relation(fields: [scenarioId], references: [id])
+    behaviour   Behaviour @relation(fields: [behaviourId], references: [id])
+    steps       Step[]    @relation("StepToStep")
+    parent      Step?     @relation("StepToStep", fields: [stepId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    behaviourId Int
+    scenarioId  Int
+    stepId      Int?
 
-    // @@index([scenarioId])
-    // @@index([behaviourId])
+    @@index([stepId])
+    @@index([scenarioId])
+    @@index([behaviourId])
 }
 
 model Behaviour {
@@ -84,7 +88,7 @@ model Behaviour {
     steps     Step[]
     projectId String?
 
-    // @@index([projectId])
+    @@index([projectId])
 }
 
 model Param {
@@ -96,5 +100,5 @@ model Param {
     feature   Feature @relation(fields: [featureId], references: [id])
     featureId String
 
-    // @@index([featureId])
+    @@index([featureId])
 }

@@ -18,6 +18,13 @@ export const featureRouter = trpc.router({
       },
     });
   }),
+  delete: protectedProcedure.input(z.object({ id: z.string() })).mutation(({ input, ctx }) => {
+    return ctx.prisma.feature.delete({
+      where: {
+        id: input.id,
+      },
+    });
+  }),
   update: protectedProcedure
     .input(
       z.object({

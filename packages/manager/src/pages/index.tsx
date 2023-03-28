@@ -55,14 +55,28 @@ export default function Home() {
       onSubmit={onSubmit}
     >
       <div className="w-full space-y-2">
-        <input type="text" name="hummus-username" required placeholder="Username" className="form-input" />
-        <input type="password" name="hummus-password" required placeholder="Password" className="form-input" />
+        <input
+          type="text"
+          name="hummus-username"
+          required
+          placeholder="Username"
+          className="form-input"
+          data-test="username-field"
+        />
+        <input
+          type="password"
+          name="hummus-password"
+          required
+          placeholder="Password"
+          className="form-input"
+          data-test="password-field"
+        />
       </div>
       <div className="w-full space-y-2">
-        <button name="login" className="button-primary w-full" value="login">
+        <button name="login" className="button-primary w-full" value="login" data-test="login-button">
           Log in
         </button>
-        <button name="signup" className="button-secondary w-full" value="signup">
+        <button name="signup" className="button-secondary w-full" value="signup" data-test="signup-button">
           Sign up
         </button>
       </div>

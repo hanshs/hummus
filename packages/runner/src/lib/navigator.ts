@@ -2,12 +2,12 @@ import { Page } from '@playwright/test';
 import { waitFor } from './wait-for';
 
 export async function navigateToLocation(page: Page, location: string) {
-  const url = new URL(location);
-
-  return page.goto(url.href);
+  // const url = new URL(location);
+  return page.goto(location);
 }
 
 export async function currentPathMatchesLocation(page: Page, location: string) {
+  console.log(page.url(), location);
   return waitFor(() => new URL(page.url()).pathname === location);
 }
 

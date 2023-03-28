@@ -24,6 +24,13 @@ export const scenariosRouter = trpc.router({
         },
       });
     }),
+  delete: protectedProcedure.input(z.object({ id: z.number() })).mutation(({ input, ctx }) => {
+    return ctx.prisma.scenario.delete({
+      where: {
+        id: input.id,
+      },
+    });
+  }),
   addStep: protectedProcedure
     .input(
       z.object({

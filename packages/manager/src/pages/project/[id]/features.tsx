@@ -10,6 +10,7 @@ import ProjectLayout from '../../../components/scenes/project-layout';
 import { ParamsTab } from '../../../components/scenes/parameters-tab';
 import { FeatureTab } from '../../../components/scenes/feature-tab';
 import { BehavioursTab } from '../../../components/scenes/behaviours-tab';
+import { ConfigureTab } from '../../../components/scenes/configure-tab';
 
 type Project = NonNullable<RouterOutputs['projects']['byId']>;
 type Feature = Project['features'][number];
@@ -32,6 +33,10 @@ export default function ProjectPage() {
     },
     {
       name: 'Behaviours',
+      isCurrent: false,
+    },
+    {
+      name: 'Configure',
       isCurrent: false,
     },
   ]);
@@ -98,6 +103,7 @@ export default function ProjectPage() {
               {selectedTab === 'Feature' && <FeatureTab feature={selectedFeature} />}
               {selectedTab === 'Parameters' && <ParamsTab feature={selectedFeature} />}
               {selectedTab === 'Behaviours' && <BehavioursTab project={project} />}
+              {selectedTab === 'Configure' && <ConfigureTab feature={selectedFeature} />}
             </div>
           </>
         )}

@@ -1,5 +1,5 @@
 import { RouterInputs, RouterOutputs } from '@hummus/api';
-import { ChevronUp, ChevronDown, Delete } from 'lucide-react';
+import { ChevronUp, ChevronDown, Delete, DeleteIcon, Trash, Trash2, TrashIcon } from 'lucide-react';
 import React from 'react';
 import reactStringReplace from 'react-string-replace';
 import { useDebouncedCallback } from 'use-debounce';
@@ -91,19 +91,31 @@ function Scenario(props: { scenario: Scenario }) {
   type ScenarioUpdateData = RouterInputs['scenarios']['update']['data'];
   const context = api.useContext();
   const update = api.scenarios.update.useMutation();
+  const remove = api.scenarios.delete.useMutation();
+
+  const onSuccess = () => context.projects.byId.invalidate();
 
   const save = useDebouncedCallback((data: ScenarioUpdateData) => {
-    update.mutate({ id: props.scenario.id, data }, { onSuccess: () => context.projects.byId.invalidate() });
+    update.mutate({ id: props.scenario.id, data }, { onSuccess });
   }, 1000);
+
+  const onDeleteScenario = () => {
+    remove.mutate({ id: props.scenario.id }, { onSuccess });
+  };
 
   return (
     <div className="space-y-4 rounded border bg-slate-50 p-4" key={props.scenario.id}>
-      <input
-        className="form-input"
-        defaultValue={props.scenario.name || ''}
-        placeholder="Scenario name"
-        onChange={(e) => save({ name: e.target.value })}
-      />
+      <div className="items-between flex justify-between gap-10">
+        <input
+          className="form-input"
+          defaultValue={props.scenario.name || ''}
+          placeholder="Scenario name"
+          onChange={(e) => save({ name: e.target.value })}
+        />
+        <button className="float-right hover:text-red-400" title="Delete" onClick={() => onDeleteScenario()}>
+          <Trash2 width={20} />
+        </button>
+      </div>
       <div className="mt-6 mb-4 font-medium">Steps</div>
       <Steps scenarioId={props.scenario.id} steps={props.scenario.steps} />
 

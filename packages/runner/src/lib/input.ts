@@ -5,7 +5,7 @@ export const inputElementValue = async (page: Page, selector: string, input: str
   if (await waitForSelector(page, selector)) {
     await page.focus(selector);
     await page.fill(selector, input);
+  } else {
+    throw new Error(`Could not find element with selector ${selector}`);
   }
-
-  throw new Error(`Could not find element with selector ${selector}`);
 };
