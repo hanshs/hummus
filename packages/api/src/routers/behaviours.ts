@@ -40,10 +40,6 @@ export const behavioursRouter = trpc.router({
       }),
     )
     .mutation(({ ctx, input }) => {
-      const data = {};
-      // if (input.steps) {
-      //   data.subSteps = {}
-      // }
       return ctx.prisma.behaviour.create({
         data: {
           value: input.value,
@@ -56,15 +52,6 @@ export const behavioursRouter = trpc.router({
                 })),
               }
             : undefined,
-          // subSteps: input.steps
-          //   ? input.steps.map(({ behaviourId, paramIds }, index) => ({
-          //       create: {
-          //         order: index + 1,
-          //         behaviour: { connect: { id: behaviourId } },
-          //         params: { connect: paramIds.map((id) => ({ id })) },
-          //       },
-          //     }))
-          //   : undefined,
           project: { connect: { id: input.projectId } },
         },
       });

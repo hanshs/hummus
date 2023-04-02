@@ -90,10 +90,6 @@ function CreateBehaviour(props: { project: Project }) {
   const context = api.useContext();
   const create = api.behaviours.create.useMutation();
   const behaviours = useAllBehaviours(props.project.id);
-  const params = api.params.all.useQuery({
-    projectId: props.project.id,
-  });
-
   const [steps, setSteps] = useState<Steps>([]);
 
   const onAddStep = (behaviour: DefaultBehaviour) => {
