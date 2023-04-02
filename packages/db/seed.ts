@@ -102,6 +102,7 @@ function upsertParams(feature: Feature) {
             value: param.value,
             type: param.type,
             feature: { connect: { id: feature.id } },
+            project: { connect: { id: project.id } },
           },
           update: {},
         }),

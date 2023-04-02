@@ -1,7 +1,7 @@
 {
   "name": "demo",
   "scripts": {
-    "test": "dotenv -- hummus run"
+    "run": "dotenv -- hummus run"
   },
   "dependencies": {
     "@hummus/runner": "*"

@@ -22,20 +22,49 @@ export const behavioursRouter = trpc.router({
       select: {
         id: true,
         value: true,
+        subSteps: {
+          include: {
+            behaviour: true,
+            params: true,
+          },
+        },
       },
     });
   }),
   create: protectedProcedure
     .input(
-      z.object({ value: z.string(), steps: z.array(z.object({ id: z.number() })).optional(), projectId: z.string() }),
+      z.object({
+        value: z.string(),
+        steps: z.array(z.object({ behaviourId: z.string(), paramIds: z.array(z.number()) })).optional(),
+        projectId: z.string(),
+      }),
     )
     .mutation(({ ctx, input }) => {
+      const data = {};
+      // if (input.steps) {
+      //   data.subSteps = {}
+      // }
       return ctx.prisma.behaviour.create({
         data: {
           value: input.value,
-          scenarioSteps: {
-            connect: input.steps,
-          },
+          subSteps: input.steps
+            ? {
+                create: input.steps.map(({ behaviourId, paramIds }, index) => ({
+                  order: index + 1,
+                  behaviour: { connect: { id: behaviourId } },
+                  params: { connect: paramIds.map((id) => ({ id })) },
+                })),
+              }
+            : undefined,
+          // subSteps: input.steps
+          //   ? input.steps.map(({ behaviourId, paramIds }, index) => ({
+          //       create: {
+          //         order: index + 1,
+          //         behaviour: { connect: { id: behaviourId } },
+          //         params: { connect: paramIds.map((id) => ({ id })) },
+          //       },
+          //     }))
+          //   : undefined,
           project: { connect: { id: input.projectId } },
         },
       });

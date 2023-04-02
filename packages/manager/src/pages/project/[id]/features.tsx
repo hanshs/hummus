@@ -100,10 +100,14 @@ export default function ProjectPage() {
           <>
             <Tabs tabs={tabs} onSelectTab={onSelectTab} className="px-6 pt-4" />
             <div className="px-8 py-4">
-              {selectedTab === 'Feature' && <FeatureTab feature={selectedFeature} />}
-              {selectedTab === 'Parameters' && <ParamsTab feature={selectedFeature} />}
-              {project && selectedTab === 'Behaviours' && <BehavioursTab project={project} />}
-              {selectedTab === 'Configure' && <ConfigureTab feature={selectedFeature} />}
+              {project && (
+                <>
+                  {selectedTab === 'Feature' && <FeatureTab feature={selectedFeature} project={project} />}
+                  {selectedTab === 'Parameters' && <ParamsTab feature={selectedFeature} project={project} />}
+                  {selectedTab === 'Behaviours' && <BehavioursTab project={project} />}
+                  {selectedTab === 'Configure' && <ConfigureTab feature={selectedFeature} project={project} />}
+                </>
+              )}
             </div>
           </>
         )}

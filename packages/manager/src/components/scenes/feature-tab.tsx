@@ -21,7 +21,7 @@ type Feature = Project['features'][number];
 type Scenario = Feature['scenarios'][number];
 type Step = Scenario['steps'][number];
 
-export function FeatureTab(props: { feature: Feature }) {
+export function FeatureTab(props: { feature: Feature; project: Project }) {
   type FeatureUpdateData = RouterInputs['features']['update']['data'];
   const context = api.useContext();
   const updateFeature = api.features.update.useMutation();
@@ -44,8 +44,6 @@ export function FeatureTab(props: { feature: Feature }) {
     );
   };
 
-  console.log(props.feature.title, props.feature.description);
-
   return (
     <>
       <label className="mb-3 block text-sm text-gray-500">Feature</label>
@@ -65,7 +63,7 @@ export function FeatureTab(props: { feature: Feature }) {
         {props.feature.scenarios.length ? (
           props.feature.scenarios.map((scenario) => (
             <li key={scenario.id}>
-              <Scenario scenario={scenario} key={scenario.id} />
+              <Scenario project={props.project} scenario={scenario} key={scenario.id} />
             </li>
           ))
         ) : (
@@ -80,7 +78,7 @@ export function FeatureTab(props: { feature: Feature }) {
   );
 }
 
-function Scenario(props: { scenario: Scenario }) {
+function Scenario(props: { scenario: Scenario; project: Project }) {
   type ScenarioUpdateData = RouterInputs['scenarios']['update']['data'];
   const context = api.useContext();
   const update = api.scenarios.update.useMutation();
@@ -111,7 +109,7 @@ function Scenario(props: { scenario: Scenario }) {
         </button>
       </div>
       <div className="mt-6 mb-2 text-sm text-gray-500">Steps</div>
-      <Steps scenarioId={props.scenario.id} steps={props.scenario.steps} />
+      <Steps scenarioId={props.scenario.id} steps={props.scenario.steps} projectId={props.project.id} />
 
       <div className="mt-6">
         <AddStep scenarioId={props.scenario.id} stepsLength={props.scenario.steps.length} />
@@ -153,7 +151,7 @@ function AddStep(props: { scenarioId: number; stepsLength: number }) {
   );
 }
 
-function Steps(props: { scenarioId: number; steps: Step[] }) {
+function Steps(props: { scenarioId: number; steps: Step[]; projectId: string }) {
   const context = api.useContext();
   const remove = api.scenarios.removeStep.useMutation();
   const reorder = api.scenarios.reorderSteps.useMutation();
@@ -178,6 +176,36 @@ function Steps(props: { scenarioId: number; steps: Step[] }) {
       },
       { onSuccess: () => context.projects.byId.invalidate() },
     );
+  };
+
+  const getStepBehaviour = (step: Step) => {
+    let behaviour: React.ReactNode[] | string = step.behaviour.value;
+
+    for (const [index, param] of step.params.entries()) {
+      behaviour = reactStringReplace(behaviour, `<${param.type}>`, (_match, _i) => (
+        <ParamSelect projectId={props.projectId} key={`${step.id}-${param.id}-${index}`} param={param} stepId={step.id}>
+          {param.name}
+        </ParamSelect>
+      )) as React.ReactNode[];
+    }
+
+    let regex = /<(.*?)>/g;
+
+    behaviour = reactStringReplace(behaviour, regex, (type, i) => {
+      return (
+        <ParamSelect
+          projectId={props.projectId}
+          key={`${step.id}-${type}-${i}`}
+          param={{ type }}
+          stepId={step.id}
+          variant="warning"
+        >
+          {`<${type}>`}
+        </ParamSelect>
+      );
+    }) as React.ReactNode[];
+
+    return behaviour;
   };
 
   return (
@@ -230,12 +258,14 @@ function ParamSelect(
     variant?: 'warning';
     param: { id?: number; type: string };
     stepId: number;
+    projectId: string;
   }>,
 ) {
   const context = api.useContext();
   const update = api.steps.update.useMutation();
   const availableParams = api.params.byType.useQuery({
     type: props.param.type,
+    projectId: props.projectId,
   });
 
   const onSelectParam = (value: string) => {
@@ -270,27 +300,3 @@ function ParamSelect(
     </DropdownMenu>
   );
 }
-
-const getStepBehaviour = (step: Step) => {
-  let behaviour: React.ReactNode[] | string = step.behaviour.value;
-
-  for (const [index, param] of step.params.entries()) {
-    behaviour = reactStringReplace(behaviour, `<${param.type}>`, (_match, _i) => (
-      <ParamSelect key={`${step.id}-${param.id}-${index}`} param={param} stepId={step.id}>
-        {param.name}
-      </ParamSelect>
-    )) as React.ReactNode[];
-  }
-
-  let regex = /<(.*?)>/g;
-
-  behaviour = reactStringReplace(behaviour, regex, (type, i) => {
-    return (
-      <ParamSelect key={`${step.id}-${type}-${i}`} param={{ type }} stepId={step.id} variant="warning">
-        {`<${type}>`}
-      </ParamSelect>
-    );
-  }) as React.ReactNode[];
-
-  return behaviour;
-};

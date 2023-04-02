@@ -8,7 +8,7 @@ type Project = NonNullable<RouterOutputs['projects']['byId']>;
 type Feature = Project['features'][number];
 type Param = Feature['params'][number];
 
-export function ParamsTab(props: { feature: Feature }) {
+export function ParamsTab(props: { feature: Feature; project: Project }) {
   type ParamUpdateInput = RouterInputs['params']['update'];
   interface CreateParamForm extends HTMLFormElement {
     readonly elements: HTMLFormControlsCollection & {
@@ -38,6 +38,7 @@ export function ParamsTab(props: { feature: Feature }) {
         value: elements['new-param-value'].value,
         type: elements['new-param-type'].value,
         featureId: props.feature.id,
+        projectId: props.project.id,
       },
       {
         onSuccess: () => {

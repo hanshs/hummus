@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 type Project = NonNullable<RouterOutputs['projects']['byId']>;
 type Feature = Project['features'][number];
 
-export function ConfigureTab(props: { project?: Project; feature: Feature }) {
+export function ConfigureTab(props: { project: Project; feature: Feature }) {
   const context = api.useContext();
 
   const del = api.features.delete.useMutation();
