@@ -10,6 +10,9 @@ export default function Layout(props: React.PropsWithChildren) {
   const logout = api.auth.logout.useMutation();
   const session = api.auth.getSession.useQuery();
   const router = useRouter();
+  const project = api.projects.byId.useQuery(router.query.id as string, {
+    enabled: Boolean(router.query.id),
+  });
 
   const onLogout = () => {
     logout.mutate(undefined, { onSuccess: () => router.push('/') });
@@ -28,7 +31,15 @@ export default function Layout(props: React.PropsWithChildren) {
           "
           >
             <Link href="/projects">
-              <h1 className="text-xl font-extrabold uppercase tracking-tight text-slate-800">Hummus</h1>
+              <div className="flex items-center space-x-4">
+                <h1 className="text-xl font-extrabold uppercase tracking-tight text-slate-800">Hummus</h1>
+                {project.data?.name && (
+                  <>
+                    <span className="text-blue-200">/</span>
+                    <span>{project.data.name}</span>
+                  </>
+                )}
+              </div>
             </Link>
             {session.data?.username && (
               <div className="flex gap-2">
@@ -39,7 +50,7 @@ export default function Layout(props: React.PropsWithChildren) {
               </div>
             )}
           </header>
-          <main className="mt-8 flex flex-col">{props.children}</main>
+          <main className="flex flex-col pt-10">{props.children}</main>
         </div>
       </div>
     </>

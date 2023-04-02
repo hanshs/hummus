@@ -36,7 +36,7 @@ export const scenariosRouter = trpc.router({
       z.object({
         scenarioId: z.number(),
         data: z.object({
-          behaviourId: z.number(),
+          behaviourId: z.string(),
           order: z.number(),
         }),
       }),

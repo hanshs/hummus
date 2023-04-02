@@ -1,6 +1,61 @@
 import { Feature, prisma, Project, User } from './index';
 import bcrypt from 'bcrypt';
 
+const project = {
+  id: 'seed-project-id',
+  name: 'Seed project',
+};
+
+const feature = {
+  id: 'seed-feature-id',
+  title: 'Seed feature',
+  description: 'As a user, I want to log into the system, so that I can do logged in user things',
+};
+
+const behaviours = [
+  { id: 'browser-is-location', value: 'I am on <location>' },
+  { id: 'browser-directed-to-location', value: 'I should be directed to <location>' },
+  { id: 'browser-click-selector', value: 'I click on <selector>' },
+  { id: 'browser-fill-selector', value: 'I fill the <selector> with <text>' },
+  { id: 'browser-selector-contains-text', value: 'The <selector> should contain the <text>' },
+  { id: 'browser-selector-not-contains-text', value: 'The <selector> should not contain the <text>' },
+  { id: 'browser-selector-visible', value: 'The <selector> should be visible' },
+  { id: 'browser-selector-not-visible', value: 'The <selector> should not be visible' },
+];
+const paramType = {
+  location: 'location',
+  selector: 'selector',
+  text: 'text',
+};
+const steps = [
+  {
+    behaviour: 'browser-is-location',
+    params: [{ name: 'login page', value: '/login', type: paramType.location }],
+  },
+  {
+    behaviour: 'browser-fill-selector',
+    params: [
+      { name: 'username field', value: '[data-test="username-field"]', type: paramType.selector },
+      { name: 'my username', value: 'testuser', type: paramType.text },
+    ],
+  },
+  {
+    behaviour: 'browser-fill-selector',
+    params: [
+      { name: 'password field', value: '[data-test="password-field"]', type: paramType.selector },
+      { name: 'my password', value: 'mypassword', type: paramType.text },
+    ],
+  },
+  {
+    behaviour: 'browser-click-selector',
+    params: [{ name: 'login button', value: '[data-test="login-button"]', type: paramType.selector }],
+  },
+  {
+    behaviour: 'browser-directed-to-location',
+    params: [{ name: 'projects page', value: '/projects', type: paramType.location }],
+  },
+];
+
 seed()
   .then(async () => {
     await prisma.$disconnect();
@@ -13,72 +68,26 @@ seed()
 
 async function seed() {
   await deleteEverything();
-  await upsertBehaviours();
 
   const user = await upsertUser();
   const project = await upsertProject(user);
   const feature = await upsertFeature(project);
 
+  await upsertBehaviours();
   await upsertParams(feature);
   await upsertScenario(feature);
 }
 
 async function deleteEverything() {
+  await prisma.param.deleteMany();
+  await prisma.step.deleteMany();
+  await prisma.behaviour.deleteMany();
+  await prisma.scenario.deleteMany();
+  await prisma.feature.deleteMany();
   await prisma.project.deleteMany();
   await prisma.user.deleteMany();
-  await prisma.feature.deleteMany();
-  await prisma.scenario.deleteMany();
-  await prisma.step.deleteMany();
-  await prisma.param.deleteMany();
-  await prisma.behaviour.deleteMany();
-  // await prisma.userOnProject.deleteMany();
+  console.log('Deleted everything, yikes!');
 }
-
-const paramType = {
-  location: 'location',
-  selector: 'selector',
-  text: 'text',
-};
-
-const behaviours = [
-  { id: 1, value: 'I am on <location>' },
-  { id: 2, value: 'I should be directed to <location>' },
-  { id: 3, value: 'I click on <selector>' },
-  { id: 4, value: 'I fill the <selector> with <text>' },
-  { id: 5, value: 'The <selector> should contain the <text>' },
-  { id: 6, value: 'The <selector> should not contain the <text>' },
-  { id: 7, value: 'The <selector> should be visible' },
-  { id: 8, value: 'The <selector> should not be visible' },
-];
-
-const steps = [
-  {
-    behaviour: 1,
-    params: [{ name: 'login page', value: '/login', type: paramType.location }],
-  },
-  {
-    behaviour: 4,
-    params: [
-      { name: 'username field', value: '[data-test="username-field"]', type: paramType.selector },
-      { name: 'my username', value: 'testuser', type: paramType.text },
-    ],
-  },
-  {
-    behaviour: 4,
-    params: [
-      { name: 'password field', value: '[data-test="password-field"]', type: paramType.selector },
-      { name: 'my password', value: 'mypassword', type: paramType.text },
-    ],
-  },
-  {
-    behaviour: 4,
-    params: [{ name: 'login button', value: '[data-test="login-button"]', type: paramType.selector }],
-  },
-  {
-    behaviour: 2,
-    params: [{ name: 'projects page', value: '/projects', type: paramType.location }],
-  },
-];
 
 function upsertParams(feature: Feature) {
   const transactions = [];
@@ -121,10 +130,9 @@ async function upsertBehaviours() {
 
 function upsertProject(user: User) {
   return prisma.project.upsert({
-    where: { id: 'seed-project-id' },
+    where: { id: project.id },
     create: {
-      id: 'seed-project-id',
-      name: 'Seed project',
+      ...project,
       users: { connect: { id: user.id } },
     },
     update: {},
@@ -133,11 +141,9 @@ function upsertProject(user: User) {
 
 function upsertFeature(project: Project) {
   return prisma.feature.upsert({
-    where: { id: 'seed-feature-id' },
+    where: { id: feature.id },
     create: {
-      id: 'seed-feature-id',
-      title: 'Seed feature',
-      description: 'As a user, I want to log into the system, so that I can do logged in user things',
+      ...feature,
       project: { connect: { id: project.id } },
     },
     update: {},
@@ -164,11 +170,12 @@ async function upsertUser() {
   });
 }
 
-function upsertScenario(feature: Feature) {
-  return prisma.scenario.upsert({
+async function upsertScenario(feature: Feature) {
+  await prisma.scenario.upsert({
     where: { id: 1 },
     create: {
       name: 'User can log in',
+      feature: { connect: { id: feature.id } },
       steps: {
         create: steps.map((step, index) => ({
           order: index + 1,
@@ -176,8 +183,50 @@ function upsertScenario(feature: Feature) {
           params: { connect: step.params.map((param) => ({ name: param.name })) },
         })),
       },
-      feature: { connect: { id: feature.id } },
     },
     update: {},
   });
+
+  await prisma.scenario.upsert({
+    where: { id: 2 },
+    create: {
+      name: 'User can log in with combined step',
+      feature: { connect: { id: feature.id } },
+      steps: {
+        create: [
+          {
+            order: 1,
+            behaviour: {
+              create: {
+                value: 'I am logged in as user',
+                project: { connect: { id: project.id } },
+                subSteps: {
+                  create: steps.map((step, index) => ({
+                    order: index + 1,
+                    behaviour: { connect: { id: step.behaviour } },
+                    params: { connect: step.params.map((param) => ({ name: param.name })) },
+                  })),
+                },
+              },
+            },
+          },
+        ],
+      },
+    },
+    update: {},
+  });
+
+  // await prisma.behaviour.create({
+  //   data: {
+  //     value: 'I am logged in as user',
+  //     project: { connect: { id: project.id } },
+  //     subSteps: {
+  //       create: steps.map((step, index) => ({
+  //         order: index + 1,
+  //         behaviour: { connect: { id: step.behaviour } },
+  //         params: { connect: step.params.map((param) => ({ name: param.name })) },
+  //       })),
+  //     },
+  //   },
+  // });
 }

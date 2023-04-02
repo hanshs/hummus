@@ -7,9 +7,10 @@
   "scripts": {
     "clean": "rimraf .turbo node_modules --impl=native",
     "db:gen": "yarn with-env prisma generate",
-    "db:push": "yarn with-env prisma db push --skip-generate",
+    "db:push": "yarn with-env prisma db push --skip-generate --accept-data-loss --force-reset",
     "db:seed": "yarn with-env prisma db seed",
-    "dev": "yarn with-env prisma studio --port 5556 --browser none",
+    "db:view": "yarn with-env prisma studio --port 5556",
+    "dev": "yarn db:view",
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {

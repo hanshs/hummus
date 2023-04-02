@@ -13,6 +13,7 @@
     "db:gen": "turbo db:gen",
     "db:push": "turbo db:push db:gen",
     "db:seed": "turbo run db:seed --filter db",
+    "db:view": "turbo run db:view --filter db",
     "runner": "turbo run dev --filter runner --filter api",
     "test": "turbo test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
@@ -29,7 +30,7 @@
     "prettier": "^2.8.1",
     "prettier-plugin-tailwindcss": "^0.2.1",
     "rimraf": "^4.1.2",
-    "turbo": "^1.8.5",
+    "turbo": "^1.8.6",
     "typescript": "^4.9.4"
   },
   "packageManager": "yarn@1.22.19"

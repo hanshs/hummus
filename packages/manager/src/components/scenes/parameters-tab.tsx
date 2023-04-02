@@ -71,7 +71,7 @@ export function ParamsTab(props: { feature: Feature }) {
 
   return (
     <>
-      <h2 className="text-lg font-semibold ">Parameters</h2>
+      {/* <h2 className="text-lg font-semibold ">Parameters</h2> */}
       <div className="mt-6 flex">
         <div className="basis-1/2 space-y-6 pr-6">
           {props.feature.params.length ? (

@@ -48,7 +48,7 @@ model Feature {
     description String?
     scenarios   Scenario[]
     params      Param[]
-    project     Project    @relation(fields: [projectId], references: [id])
+    project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
     projectId   String
 
     @@index([projectId])
@@ -57,7 +57,7 @@ model Feature {
 model Scenario {
     id        Int     @id @default(autoincrement())
     name      String?
-    steps     Step[]
+    steps     Step[]  @relation("ScenarioSteps")
     feature   Feature @relation(fields: [featureId], references: [id])
     featureId String
 
@@ -65,27 +65,27 @@ model Scenario {
 }
 
 model Step {
-    id          Int       @id @default(autoincrement())
-    order       Int
-    params      Param[]
-    scenario    Scenario  @relation(fields: [scenarioId], references: [id])
-    behaviour   Behaviour @relation(fields: [behaviourId], references: [id])
-    steps       Step[]    @relation("StepToStep")
-    parent      Step?     @relation("StepToStep", fields: [stepId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    behaviourId Int
-    scenarioId  Int
-    stepId      Int?
+    id                Int        @id @default(autoincrement())
+    order             Int
+    params            Param[]
+    behaviour         Behaviour  @relation("StepBehaviour", fields: [behaviourId], references: [id])
+    scenario          Scenario?  @relation("ScenarioSteps", fields: [scenarioId], references: [id])
+    parentBehaviour   Behaviour? @relation("BehaviourSubSteps", fields: [parentBehaviourId], references: [id])
+    behaviourId       String
+    scenarioId        Int?
+    parentBehaviourId String?
 
-    @@index([stepId])
     @@index([scenarioId])
     @@index([behaviourId])
+    @@index([parentBehaviourId])
 }
 
 model Behaviour {
-    id        Int      @id @default(autoincrement())
+    id        String   @id @default(uuid())
     value     String   @unique
     project   Project? @relation(fields: [projectId], references: [id])
-    steps     Step[]
+    steps     Step[]   @relation("StepBehaviour")
+    subSteps  Step[]   @relation("BehaviourSubSteps")
     projectId String?
 
     @@index([projectId])

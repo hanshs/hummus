@@ -98,11 +98,11 @@ export default function ProjectPage() {
       <div className="w-full">
         {selectedFeature && (
           <>
-            <Tabs tabs={tabs} onSelectTab={onSelectTab} className="px-6 py-4" />
+            <Tabs tabs={tabs} onSelectTab={onSelectTab} className="px-6 pt-4" />
             <div className="px-8 py-4">
               {selectedTab === 'Feature' && <FeatureTab feature={selectedFeature} />}
               {selectedTab === 'Parameters' && <ParamsTab feature={selectedFeature} />}
-              {selectedTab === 'Behaviours' && <BehavioursTab project={project} />}
+              {project && selectedTab === 'Behaviours' && <BehavioursTab project={project} />}
               {selectedTab === 'Configure' && <ConfigureTab feature={selectedFeature} />}
             </div>
           </>

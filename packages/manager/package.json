@@ -3,7 +3,7 @@
   "author": "Hans Starkopf",
   "version": "0.0.1",
   "scripts": {
-    "dev": "yarn with-env next dev",
+    "dev": "yarn with-env next dev --port 3001",
     "build": "yarn with-env next build",
     "clean": "rimraf .next .turbo node_modules --impl=native",
     "lint": "set SKIP_ENV_VALIDATION=1 next lint",

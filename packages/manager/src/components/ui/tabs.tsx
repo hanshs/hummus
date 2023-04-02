@@ -10,14 +10,16 @@ export default function Tabs(props: {
   return (
     <div className={cn('space-x-2 border-b', props.className)}>
       {props.tabs.map((tab, i) => (
-        <Button
-          size="sm"
+        <button
           key={i}
-          variant={tab.isCurrent ? 'subtle' : 'ghost'}
+          // variant={tab.isCurrent ? 'subtle' : 'ghost'}
+          className={`px-2 pb-4 text-sm text-gray-500 hover:text-gray-900 ${
+            tab.isCurrent ? 'border-b-2 border-sky-500 font-semibold text-gray-900' : ''
+          }`}
           onClick={() => props.onSelectTab(tab.name)}
         >
           {tab.name}
-        </Button>
+        </button>
       ))}
     </div>
   );

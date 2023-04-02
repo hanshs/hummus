@@ -1,19 +1,6 @@
 {
   "$schema": "https://turborepo.org/schema.json",
   "pipeline": {
-    "test": {
-      "cache": false
-    },
-    "db:seed": {},
-    "start": {},
-    "db:gen": {
-      "inputs": ["prisma/schema.prisma"],
-      "cache": false
-    },
-    "db:push": {
-      "inputs": ["prisma/schema.prisma"],
-      "cache": false
-    },
     "dev": {
       "dependsOn": ["^db:gen"],
       "persistent": true,
@@ -22,6 +9,24 @@
     "build": {
       "dependsOn": ["^build", "^db:gen"],
       "outputs": [".next/**"]
+    },
+    "start": {},
+    "test": {
+      "cache": false
+    },
+    "db:push": {
+      "inputs": ["prisma/schema.prisma"],
+      "cache": false
+    },
+    "db:gen": {
+      "inputs": ["prisma/schema.prisma"],
+      "cache": false
+    },
+    "db:seed": {
+      "cache": false
+    },
+    "db:view": {
+      "cache": false
     },
     "lint": {
       "outputs": []
