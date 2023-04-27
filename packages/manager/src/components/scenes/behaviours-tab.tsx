@@ -17,7 +17,7 @@ import {
 } from '../ui/dropdown';
 
 type Project = NonNullable<RouterOutputs['projects']['byId']>;
-type DefaultBehaviour = RouterOutputs['behaviours']['browser'][number];
+type DefaultBehaviour = RouterOutputs['behaviours']['default'][number];
 type ProjectBehaviours = RouterOutputs['behaviours']['byProjectId'][number];
 type Steps = {
   behaviour: { id: string; value: string };
@@ -25,7 +25,7 @@ type Steps = {
 }[];
 type Params = Steps[number]['params'];
 export function BehavioursTab(props: { project: Project }) {
-  const defaultBehaviours = api.behaviours.browser.useQuery();
+  const defaultBehaviours = api.behaviours.default.useQuery();
   const projectBehaviours = api.behaviours.byProjectId.useQuery({ projectId: props.project.id });
 
   return (
@@ -75,7 +75,7 @@ export function BehavioursTab(props: { project: Project }) {
 }
 
 function useAllBehaviours(projectId: string): (DefaultBehaviour | ProjectBehaviours)[] {
-  const defaultBehaviours = api.behaviours.browser.useQuery();
+  const defaultBehaviours = api.behaviours.default.useQuery();
   const projectBehaviours = api.behaviours.byProjectId.useQuery({ projectId });
 
   return [...(defaultBehaviours.data || []), ...(projectBehaviours.data || [])];
@@ -95,7 +95,9 @@ function CreateBehaviour(props: { project: Project }) {
   const onAddStep = (behaviour: DefaultBehaviour) => {
     setSteps([...steps, { behaviour, params: [] }]);
   };
-  const onRemoveStep = (step: Steps[number]) => {};
+  const onRemoveStep = (step: Steps[number]) => {
+    setSteps((s) => s.filter((s) => step.behaviour !== s.behaviour));
+  };
   const onCreateBehaviour = (e: React.FormEvent<CreateBehaviourForm>) => {
     e.preventDefault();
 
@@ -110,7 +112,7 @@ function CreateBehaviour(props: { project: Project }) {
         {
           onSuccess: () => {
             context.projects.byId.invalidate();
-            context.behaviours.browser.invalidate();
+            context.behaviours.default.invalidate();
             context.behaviours.byProjectId.invalidate();
             (e.target as CreateBehaviourForm).reset();
             setSteps([]);
@@ -157,7 +159,12 @@ function CreateBehaviour(props: { project: Project }) {
                   </BehaviourSubStepParamSelect>
                 ))}
                 <div className="absolute right-2 top-1 flex space-x-1">
-                  <button className="hover:text-red-400" title="Delete" onClick={() => onRemoveStep(step)}>
+                  <button
+                    className="hover:text-red-400"
+                    title="Delete"
+                    type="button"
+                    onClick={() => onRemoveStep(step)}
+                  >
                     <X width={20} />
                   </button>
                 </div>

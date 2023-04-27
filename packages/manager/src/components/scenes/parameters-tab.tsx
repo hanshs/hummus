@@ -107,7 +107,7 @@ export function ParamsTab(props: { feature: Feature; project: Project }) {
               );
             })
           ) : (
-            <p>This feature has no parameters.</p>
+            <p className="text-gray-600">This feature has no parameters.</p>
           )}
         </div>
         <div className="basis-1/2 space-y-6">

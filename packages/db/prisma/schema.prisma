@@ -2,6 +2,7 @@
 
 generator client {
     provider = "prisma-client-js"
+    // previewFeatures = ["jsonProtocol"]
     // output   = "../../../node_modules/.prisma/client"
 }
 
@@ -94,8 +95,8 @@ model Behaviour {
 
 model Param {
     id        Int     @id @default(autoincrement())
-    name      String  @unique
-    value     String  @unique
+    name      String
+    value     String
     type      String
     steps     Step[]
     feature   Feature @relation(fields: [featureId], references: [id])
@@ -104,4 +105,5 @@ model Param {
     projectId String
 
     @@index([featureId, projectId])
+    @@index([projectId])
 }

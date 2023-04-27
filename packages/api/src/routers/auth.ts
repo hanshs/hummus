@@ -12,27 +12,34 @@ const authSchema = z.object({
 
 export const authRouter = trpc.router({
   login: publicProcedure.input(authSchema).mutation(async ({ ctx, input }) => {
-    const user = await ctx.prisma.user.findFirst({ where: { username: input.username } });
+    try {
+      const user = await ctx.prisma.user.findFirst({ where: { username: input.username } });
 
-    if (user) {
-      const matches = await verify(input.password, user.password);
+      if (user) {
+        const matches = await verify(input.password, user.password);
 
-      if (matches) {
-        ctx.session.isLoggedIn = true;
-        ctx.session.userId = user.id;
-        ctx.session.token = user.accessToken;
-        ctx.session.username = user.username;
+        if (matches) {
+          ctx.session.isLoggedIn = true;
+          ctx.session.userId = user.id;
+          ctx.session.token = user.accessToken;
+          ctx.session.username = user.username;
 
-        if ('save' in ctx.session) await ctx.session.save();
+          if ('save' in ctx.session) await ctx.session.save();
 
-        return ctx.session;
+          return ctx.session;
+        }
       }
-    }
 
-    throw new TRPCError({
-      code: 'CONFLICT',
-      message: 'Invalid credentials.',
-    });
+      throw new TRPCError({
+        code: 'CONFLICT',
+        message: 'Invalid credentials.',
+      });
+    } catch (e) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Something went wrong.',
+      });
+    }
   }),
   signup: publicProcedure.input(authSchema).mutation(async ({ ctx, input }) => {
     const { username, password } = input;
@@ -45,9 +52,16 @@ export const authRouter = trpc.router({
       });
     }
 
-    return ctx.prisma.user.create({
-      data: { username, password: await bcrypt.hash(password, 10) },
-    });
+    try {
+      return ctx.prisma.user.create({
+        data: { username, password: await bcrypt.hash(password, 10) },
+      });
+    } catch (e) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Something went wrong.',
+      });
+    }
   }),
   getSession: publicProcedure.query(({ ctx }) => {
     return ctx.session;

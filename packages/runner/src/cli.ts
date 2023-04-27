@@ -41,12 +41,12 @@ async function run() {
   log(`Test files generated!`);
   log('Executing spec ...');
 
-  try {
-    await systemSync(`npx playwright test ${dir} -`);
-    // await systemSync('npx playwright show-report');
-  } catch (e) {
-    log('Exception occurred while running Playwright test cases: ', e.message);
-  }
+  // try {
+  //   await systemSync(`npx playwright test ${dir} -`);
+  //   // await systemSync('npx playwright show-report');
+  // } catch (e) {
+  //   log('Exception occurred while running Playwright test cases: ', e.message);
+  // }
 }
 
 async function systemSync(cmd: string) {

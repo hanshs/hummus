@@ -10,7 +10,7 @@ import ProjectLayout from '../../../components/scenes/project-layout';
 import { ParamsTab } from '../../../components/scenes/parameters-tab';
 import { FeatureTab } from '../../../components/scenes/feature-tab';
 import { BehavioursTab } from '../../../components/scenes/behaviours-tab';
-import { ConfigureTab } from '../../../components/scenes/configure-tab';
+import { SettingsTab } from '../../../components/scenes/settings-tab';
 
 type Project = NonNullable<RouterOutputs['projects']['byId']>;
 type Feature = Project['features'][number];
@@ -36,7 +36,7 @@ export default function ProjectPage() {
       isCurrent: false,
     },
     {
-      name: 'Configure',
+      name: 'Settings',
       isCurrent: false,
     },
   ]);
@@ -102,10 +102,12 @@ export default function ProjectPage() {
             <div className="px-8 py-4">
               {project && (
                 <>
-                  {selectedTab === 'Feature' && <FeatureTab feature={selectedFeature} project={project} />}
+                  {selectedTab === 'Feature' && (
+                    <FeatureTab key={selectedFeatureId} feature={selectedFeature} project={project} />
+                  )}
                   {selectedTab === 'Parameters' && <ParamsTab feature={selectedFeature} project={project} />}
                   {selectedTab === 'Behaviours' && <BehavioursTab project={project} />}
-                  {selectedTab === 'Configure' && <ConfigureTab feature={selectedFeature} project={project} />}
+                  {selectedTab === 'Settings' && <SettingsTab feature={selectedFeature} project={project} />}
                 </>
               )}
             </div>

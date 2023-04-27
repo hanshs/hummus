@@ -1,5 +1,6 @@
 import { ExternalLink } from 'lucide-react';
 import Link from 'next/link';
+import { useToaster } from '../components/ui/toast/use-toast';
 import { api } from '../utils/api';
 import { withSession } from '../utils/session';
 interface CreateProjectForm extends HTMLFormElement {
@@ -11,17 +12,26 @@ export default function ProjectsPage() {
   const context = api.useContext();
   const projects = api.projects.all.useQuery();
   const create = api.projects.create.useMutation();
+  const toaster = useToaster();
 
   const onCreateProject = (e: React.FormEvent<CreateProjectForm>) => {
     e.preventDefault();
-    create.mutate(
+    create.mutateAsync(
       {
         name: e.currentTarget.elements['hummus-project-name'].value,
       },
       {
         onSuccess: () => {
           context.projects.all.invalidate();
-          e.currentTarget.reset();
+
+          toaster.toast({
+            title: 'Project created!',
+          });
+
+          (e.target as any).reset();
+        },
+        onError: (err) => {
+          toaster.toast({ title: 'Failed to create project.', description: err.message, variant: 'destructive' });
         },
       },
     );

@@ -4,6 +4,7 @@ import { trpc } from '../trpc';
 
 export const projectsRouter = trpc.router({
   all: protectedProcedure.query(({ ctx }) => {
+    // console.log(ctx);
     return ctx.prisma.project.findMany({
       where: {
         users: { some: { id: ctx.session.userId } },
@@ -40,7 +41,14 @@ export const projectsRouter = trpc.router({
                 steps: {
                   include: {
                     behaviour: {
-                      include: { subSteps: true },
+                      include: {
+                        subSteps: {
+                          include: {
+                            behaviour: true,
+                            params: true,
+                          },
+                        },
+                      },
                     },
                     params: true,
                   },

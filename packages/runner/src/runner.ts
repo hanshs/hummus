@@ -3,13 +3,15 @@ import { inputElementValue } from './lib/input';
 import { currentPathMatchesLocation, navigateToLocation } from './lib/navigator';
 
 import type { Page } from '@playwright/test';
-import type { Params } from './manager';
+import type { Param } from './manager';
 
-function getParam(params: Params, type: string) {
+type ParamBase = Pick<Param, 'name' | 'type' | 'value'>;
+
+function getParam(params: ParamBase[], type: string) {
   return params.find((p) => p.type === type);
 }
 
-export function testBehaviour(behaviour: string, params: Params, page: Page) {
+export function testBehaviour(behaviour: string, params: ParamBase[], page: Page) {
   const location = getParam(params, 'location');
   const selector = getParam(params, 'selector');
   const text = getParam(params, 'text');

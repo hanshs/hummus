@@ -8,7 +8,9 @@ export type Project = RouterOutputs['projects']['byId'];
 export type Feature = NonNullable<Project>['features'][number];
 export type Scenario = Feature['scenarios'][number];
 export type Step = Scenario['steps'][number];
-export type Params = Step['params'];
+export type Behaviour = Step['behaviour'];
+export type BehaviourSubStep = Step['behaviour']['subSteps'][number];
+export type Param = Step['params'][number];
 
 const globalAny = global as any;
 globalAny.AbortController = AbortController;

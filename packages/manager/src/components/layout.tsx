@@ -6,7 +6,6 @@ import React from 'react';
 import { api } from '../utils/api';
 
 export default function Layout(props: React.PropsWithChildren) {
-  const context = api.useContext();
   const logout = api.auth.logout.useMutation();
   const session = api.auth.getSession.useQuery();
   const router = useRouter();

@@ -4,6 +4,7 @@ import React from 'react';
 import { api } from '../utils/api';
 import Layout from '../components/layout';
 import { useRouter } from 'next/router';
+import { Toaster } from '../components/ui/toast/toaster';
 
 const MyApp: AppType<{}> = ({ Component, pageProps }) => {
   const session = api.auth.getSession.useQuery();
@@ -20,6 +21,7 @@ const MyApp: AppType<{}> = ({ Component, pageProps }) => {
   return (
     <Layout>
       <Component {...pageProps} />
+      <Toaster />
     </Layout>
   );
 };

@@ -15,6 +15,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '../ui/dropdown';
+import { useToaster } from '../ui/toast/use-toast';
 
 type Project = NonNullable<RouterOutputs['projects']['byId']>;
 type Feature = Project['features'][number];
@@ -23,24 +24,41 @@ type Step = Scenario['steps'][number];
 
 export function FeatureTab(props: { feature: Feature; project: Project }) {
   type FeatureUpdateData = RouterInputs['features']['update']['data'];
-  const context = api.useContext();
+
   const updateFeature = api.features.update.useMutation();
   const addScenario = api.scenarios.create.useMutation();
-
-  // const []
-
+  const context = api.useContext();
+  const toaster = useToaster();
   const error = updateFeature.error;
+
   const save = useDebouncedCallback((data: FeatureUpdateData) => {
     updateFeature.mutate(
       { id: props.feature.id, data },
-      { onSuccess: () => context.projects.byId.invalidate(props.feature.projectId) },
+      {
+        onSuccess: () => {
+          context.projects.byId.invalidate(props.feature.projectId);
+          toaster.toast({
+            description: 'Feature updated!',
+          });
+        },
+      },
     );
   }, 1000);
 
   const onAddScenario = () => {
     addScenario.mutate(
       { featureId: props.feature.id },
-      { onSuccess: () => context.projects.byId.invalidate(props.feature.projectId) },
+      {
+        onSuccess: () => {
+          context.projects.byId.invalidate(props.feature.projectId);
+        },
+        onError: () => {
+          toaster.toast({
+            variant: 'destructive',
+            description: 'Failed to create scenario',
+          });
+        },
+      },
     );
   };
 
@@ -67,7 +85,7 @@ export function FeatureTab(props: { feature: Feature; project: Project }) {
             </li>
           ))
         ) : (
-          <p>This feature has no scenarios.</p>
+          <p className="text-gray-600">This feature has no scenarios.</p>
         )}
       </ul>
       {error && error.message}
@@ -85,9 +103,25 @@ function Scenario(props: { scenario: Scenario; project: Project }) {
   const remove = api.scenarios.delete.useMutation();
 
   const onSuccess = () => context.projects.byId.invalidate();
+  const toaster = useToaster();
 
   const save = useDebouncedCallback((data: ScenarioUpdateData) => {
-    update.mutate({ id: props.scenario.id, data }, { onSuccess });
+    update.mutate(
+      { id: props.scenario.id, data },
+      {
+        onSuccess: () => {
+          toaster.toast({
+            description: 'Scenario updated!',
+          });
+        },
+        onError: () => {
+          toaster.toast({
+            variant: 'destructive',
+            description: 'Failed to update scenario.',
+          });
+        },
+      },
+    );
   }, 1000);
 
   const onDeleteScenario = () => {
@@ -112,16 +146,23 @@ function Scenario(props: { scenario: Scenario; project: Project }) {
       <Steps scenarioId={props.scenario.id} steps={props.scenario.steps} projectId={props.project.id} />
 
       <div className="mt-6">
-        <AddStep scenarioId={props.scenario.id} stepsLength={props.scenario.steps.length} />
+        <AddStep
+          projectId={props.project.id}
+          scenarioId={props.scenario.id}
+          stepsLength={props.scenario.steps.length}
+        />
       </div>
     </div>
   );
 }
 
-function AddStep(props: { scenarioId: number; stepsLength: number }) {
+function AddStep(props: { projectId: string; scenarioId: number; stepsLength: number }) {
   const context = api.useContext();
-  const behaviours = api.behaviours.browser.useQuery();
+  const defaultBehaviours = api.behaviours.default.useQuery();
+  const projectBehaviours = api.behaviours.byProjectId.useQuery({ projectId: props.projectId });
   const addStep = api.scenarios.addStep.useMutation();
+
+  const toaster = useToaster();
 
   const onAddStep = (behaviourId: string) => {
     addStep.mutate(
@@ -129,7 +170,15 @@ function AddStep(props: { scenarioId: number; stepsLength: number }) {
         scenarioId: props.scenarioId,
         data: { order: props.stepsLength + 1, behaviourId },
       },
-      { onSuccess: () => context.projects.byId.invalidate() },
+      {
+        onSuccess: () => context.projects.byId.invalidate(),
+        onError: () => {
+          toaster.toast({
+            variant: 'destructive',
+            description: 'Failed to add step.',
+          });
+        },
+      },
     );
   };
 
@@ -141,7 +190,12 @@ function AddStep(props: { scenarioId: number; stepsLength: number }) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {behaviours.data?.map((behaviour) => (
+        {projectBehaviours.data?.map((behaviour) => (
+          <DropdownMenuItem key={behaviour.id} onSelect={() => onAddStep(behaviour.id)}>
+            {behaviour.value}
+          </DropdownMenuItem>
+        ))}
+        {defaultBehaviours.data?.map((behaviour) => (
           <DropdownMenuItem key={behaviour.id} onSelect={() => onAddStep(behaviour.id)}>
             {behaviour.value}
           </DropdownMenuItem>
@@ -155,13 +209,22 @@ function Steps(props: { scenarioId: number; steps: Step[]; projectId: string }) 
   const context = api.useContext();
   const remove = api.scenarios.removeStep.useMutation();
   const reorder = api.scenarios.reorderSteps.useMutation();
+  const toaster = useToaster();
 
   const [showActions, setShowActions] = React.useState<number>();
 
   const onRemoveStep = (step: Step) =>
     remove.mutate(
       { scenarioId: props.scenarioId, stepId: step.id },
-      { onSuccess: () => context.projects.byId.invalidate() },
+      {
+        onSuccess: () => context.projects.byId.invalidate(),
+        onError: () => {
+          toaster.toast({
+            variant: 'destructive',
+            description: 'Failed to add step.',
+          });
+        },
+      },
     );
 
   const onReorderStep = (index: number, direction: 'up' | 'down') => {
@@ -220,7 +283,7 @@ function Steps(props: { scenarioId: number; steps: Step[]; projectId: string }) 
                 key={index}
                 className={cn(
                   'relative rounded-lg  border-transparent py-1',
-                  showActions === index && '-mx-2 border-inherit bg-gray-200 px-2',
+                  showActions === index && '-mx-2 border-inherit bg-zinc-100 px-2',
                 )}
                 onMouseOver={() => setShowActions(index)}
                 onMouseLeave={() => setShowActions(undefined)}
@@ -278,6 +341,12 @@ function ParamSelect(
     );
   };
 
+  const menuItems = availableParams.data?.map((param) => (
+    <DropdownMenuRadioItem key={param.id} value={String(param.id)}>
+      {param.name}
+    </DropdownMenuRadioItem>
+  ));
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -290,11 +359,17 @@ function ParamSelect(
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuRadioGroup value={String(props.param.id)} onValueChange={onSelectParam}>
-          {availableParams.data?.map((param) => (
-            <DropdownMenuRadioItem key={param.id} value={String(param.id)}>
-              {param.name}
+          {availableParams.data?.length ? (
+            availableParams.data.map((param) => (
+              <DropdownMenuRadioItem key={param.id} value={String(param.id)}>
+                {param.name}
+              </DropdownMenuRadioItem>
+            ))
+          ) : (
+            <DropdownMenuRadioItem key="no-params" value={'wat'} disabled>
+              This project has no parameters.
             </DropdownMenuRadioItem>
-          ))}
+          )}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

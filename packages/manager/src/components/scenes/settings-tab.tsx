@@ -5,7 +5,7 @@ import { Button } from '../ui/button';
 type Project = NonNullable<RouterOutputs['projects']['byId']>;
 type Feature = Project['features'][number];
 
-export function ConfigureTab(props: { project: Project; feature: Feature }) {
+export function SettingsTab(props: { project: Project; feature: Feature }) {
   const context = api.useContext();
 
   const del = api.features.delete.useMutation();
@@ -23,7 +23,7 @@ export function ConfigureTab(props: { project: Project; feature: Feature }) {
   };
   return (
     <>
-      <h2 className="text-lg font-semibold ">Confiure</h2>
+      {/* <h2 className="text-lg font-semibold ">Confiure</h2> */}
       <div className="mt-6 flex">
         <Button variant="outline" size="sm" onClick={onDelete}>
           Delete feature

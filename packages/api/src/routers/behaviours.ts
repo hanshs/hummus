@@ -3,7 +3,7 @@ import { protectedProcedure } from '../procedure';
 import { trpc } from '../trpc';
 
 export const behavioursRouter = trpc.router({
-  browser: protectedProcedure.query(({ ctx }) => {
+  default: protectedProcedure.query(({ ctx }) => {
     return ctx.prisma.behaviour.findMany({
       where: {
         projectId: null,
