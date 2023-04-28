@@ -1,6 +1,5 @@
 #!/usr/bin/env tsx
 
-import fs from 'fs';
 import path from 'path';
 import { spawn } from 'child_process';
 
@@ -15,26 +14,17 @@ function loadConfig() {
   return resolveConfig(config);
 }
 
-function cleanDirectory(dirPath: string) {
-  if (fs.existsSync(dirPath)) {
-    fs.rmSync(dirPath, { recursive: true, force: true });
-  }
-}
-
 async function run() {
   const config = loadConfig();
-
   log('Config loaded!');
 
   const project = await getProject(config);
-
   log(`Project "${project?.name}" retrieved!`);
 
-  cleanDirectory(config.dir);
   await generate(project, config);
 
   log(`Test files generated!`);
-  log('Executing spec ...');
+  log('Executing spec using Playwright ...');
 
   spawn('npx', ['playwright', 'test', config.dir, '--headed'], { stdio: 'inherit', shell: true });
 }

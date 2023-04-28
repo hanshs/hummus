@@ -1,8 +1,8 @@
+import type { Page } from '@playwright/test';
+
+import type { Param } from './manager';
 import { clickElement, inputElementValue } from './lib/interactions';
 import { verifyDirectedToLocation, navigateToLocation } from './lib/navigation';
-
-import type { Page } from '@playwright/test';
-import type { Param } from './manager';
 import { verifyElementContainsText, verifyElementVisibility } from './lib/visibility';
 
 type ParamBase = Pick<Param, 'name' | 'type' | 'value'>;

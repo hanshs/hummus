@@ -24,7 +24,7 @@ export async function getProject(config: ResolvedConfig) {
     transformer,
     links: [
       httpLink({
-        url: 'http://localhost:4000',
+        url: config.managerURL,
         headers() {
           return {
             Authorization: token,

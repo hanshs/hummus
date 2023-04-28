@@ -34,6 +34,7 @@ export const projectsRouter = trpc.router({
         },
       },
       include: {
+        // yikes
         features: {
           include: {
             scenarios: {

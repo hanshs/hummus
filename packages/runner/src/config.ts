@@ -2,6 +2,7 @@ interface UserConfig {
   /** directory where tests will be written */
   dir?: string;
   projectId: string;
+  managerURL: string;
   auth: {
     username: string;
     password: string;

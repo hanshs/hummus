@@ -2,8 +2,14 @@ import fs from 'fs';
 import path from 'path';
 import { ResolvedConfig } from './config';
 import { Behaviour, BehaviourSubStep, BehaviourSubSubStep, Feature, Param, Project, Scenario, Step } from './manager';
-
+function cleanDirectory(dirPath: string) {
+  if (fs.existsSync(dirPath)) {
+    fs.rmSync(dirPath, { recursive: true, force: true });
+  }
+}
 export async function generate(project: Project, config: ResolvedConfig) {
+  cleanDirectory(config.dir);
+
   if (project?.features) {
     for (const feature of project.features) {
       const dir = path.join(process.cwd(), config.dir);
