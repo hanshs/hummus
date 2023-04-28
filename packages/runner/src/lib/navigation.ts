@@ -1,14 +1,18 @@
 import { Page } from '@playwright/test';
 import { waitFor } from './wait-for';
 
+function pagePathMatchesLocation(page: Page, location: string) {
+  return new URL(page.url()).pathname === location;
+}
+
 export async function navigateToLocation(page: Page, location: string) {
-  // const url = new URL(location);
+  if (pagePathMatchesLocation(page, location)) return true;
+
   return page.goto(location);
 }
 
-export async function currentPathMatchesLocation(page: Page, location: string) {
-  console.log(page.url(), location);
-  return waitFor(() => new URL(page.url()).pathname === location);
+export function verifyDirectedToLocation(page: Page, location: string) {
+  return waitFor(() => pagePathMatchesLocation(page, location));
 }
 
 // const pathMatchesPageId = (path: string, pageId: PageId, pagesConfig: PagesConfig) => {

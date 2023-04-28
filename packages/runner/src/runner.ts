@@ -1,9 +1,9 @@
-import { click } from './lib/click';
-import { inputElementValue } from './lib/input';
-import { currentPathMatchesLocation, navigateToLocation } from './lib/navigator';
+import { clickElement, inputElementValue } from './lib/interactions';
+import { verifyDirectedToLocation, navigateToLocation } from './lib/navigation';
 
 import type { Page } from '@playwright/test';
 import type { Param } from './manager';
+import { verifyElementContainsText, verifyElementVisibility } from './lib/visibility';
 
 type ParamBase = Pick<Param, 'name' | 'type' | 'value'>;
 
@@ -23,17 +23,25 @@ export function testBehaviour(behaviour: string, params: ParamBase[], page: Page
       if (location) return navigateToLocation(page, location.value);
 
     case 'I am directed to <location>':
-      if (location) return currentPathMatchesLocation(page, location.value);
+      if (location) return verifyDirectedToLocation(page, location.value);
 
     case 'I click on <selector>':
-      if (selector) return click(page, selector.value);
+      if (selector) return clickElement(page, selector.value);
 
     case 'I fill the <selector> with <text>':
       if (selector && text) return inputElementValue(page, selector.value, text.value);
 
-    // case 'the <selector> should contain the <text>':
-    // case 'the <selector> should not contain the <text>':
-    // case 'the <selector> should be visible':
+    case 'The <selector> should contain the <text>':
+      if (selector && text) return verifyElementContainsText(page, selector.value, text.value);
+
+    case 'The <selector> should not contain the <text>':
+      if (selector && text) return verifyElementContainsText(page, selector.value, text.value, true);
+
+    case 'The <selector> should be visible':
+      if (selector) return verifyElementVisibility(page, selector.value);
+
+    case 'The <selector> should not be visible':
+      if (selector) return verifyElementVisibility(page, selector.value, true);
 
     default:
       error = new Error(`The step definition for "${behaviour}" is not implemented.`);
@@ -42,27 +50,3 @@ export function testBehaviour(behaviour: string, params: ParamBase[], page: Page
   if (error) throw error;
   else throw new Error(`Unable to execute behaviour ${behaviour} - ${JSON.stringify(params)}`);
 }
-
-// function testScenario(scenario: Scenario) {
-//   test(scenario.name || 'Untitled scenario', async ({ page }) => {
-//     for (const step of scenario.steps.sort((step, next) => step.order - next.order)) {
-//       await test.step(`${step.order}. ${replaceStepParams(step.behaviour.value, step.params)}`, async () => {
-//         await testBehaviour(step.behaviour.value, step.params, page);
-//       });
-//     }
-//   });
-// }
-
-// function testFeature(feature: Feature) {
-//   test.describe(feature.title || 'Untitled feature', () => {
-//     for (const scenario of feature.scenarios) testScenario(scenario);
-//   });
-// }
-
-// export function testProject(project: Project) {
-//   if (project?.features) {
-//     for (const feature of project.features) testFeature(feature);
-//   } else {
-//     throw new Error('Project has no features');
-//   }
-// }

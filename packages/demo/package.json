@@ -1,7 +1,9 @@
 {
   "name": "demo",
+  "version": "0.0.1",
   "scripts": {
-    "test": "dotenv -- hummus run"
+    "test": "yarn with-env hummus run",
+    "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
     "@hummus/runner": "*"

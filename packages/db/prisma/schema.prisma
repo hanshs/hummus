@@ -41,7 +41,7 @@ model Project {
     users      User[]
     features   Feature[]
     behaviours Behaviour[]
-    param      Param[]
+    params     Param[]
 }
 
 model Feature {
@@ -94,14 +94,14 @@ model Behaviour {
 }
 
 model Param {
-    id        Int     @id @default(autoincrement())
+    id        Int      @id @default(autoincrement())
     name      String
     value     String
     type      String
     steps     Step[]
-    feature   Feature @relation(fields: [featureId], references: [id])
-    featureId String
-    project   Project @relation(fields: [projectId], references: [id])
+    feature   Feature? @relation(fields: [featureId], references: [id])
+    featureId String?
+    project   Project  @relation(fields: [projectId], references: [id])
     projectId String
 
     @@index([featureId, projectId])

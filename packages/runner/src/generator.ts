@@ -1,16 +1,12 @@
 import fs from 'fs';
 import path from 'path';
-import { Behaviour, BehaviourSubStep, Feature, Param, Project, Scenario, Step } from './manager';
+import { ResolvedConfig } from './config';
+import { Behaviour, BehaviourSubStep, BehaviourSubSubStep, Feature, Param, Project, Scenario, Step } from './manager';
 
-interface GenerateOptions {
-  /** directory where tests will be written */
-  dir: string;
-}
-
-export async function generate(project: Project, options: GenerateOptions) {
+export async function generate(project: Project, config: ResolvedConfig) {
   if (project?.features) {
     for (const feature of project.features) {
-      const dir = path.join(process.cwd(), options.dir);
+      const dir = path.join(process.cwd(), config.dir);
       const file = path.join(
         dir,
         `${feature.title?.toLowerCase().split(' ').join('-') || `untitled-feature-${randomString(4)}`}.spec.ts`,
@@ -21,17 +17,7 @@ export async function generate(project: Project, options: GenerateOptions) {
         `import { testBehaviour } from '@hummus/runner';`,
       ];
 
-      // for every scenario generate a test function
-      // for (const scenario of feature.scenarios) {
-      // code.push(`test.describe('${feature.title || `untitled-scenario-${randomString(4)}`}', async () => {
-      //     ${generateScenarios(feature)}
-      //   });`);
-      code.push(generateScenarios(feature));
-
-      // }
-
-      //   const dir = path.join(process.cwd(), '.temp');
-      //   const specFile = path.join(dir, 'hummus.spec.ts');
+      code.push(generateScenarios(feature, config));
 
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir, { recursive: true });
@@ -43,13 +29,14 @@ export async function generate(project: Project, options: GenerateOptions) {
   }
 }
 
-function generateScenarios(feature: Feature) {
+function generateScenarios(feature: Feature, config: ResolvedConfig) {
   const code: string[] = [];
 
   for (const scenario of feature.scenarios) {
     code.push(`
 test('${feature.title} > ${scenario.name || `untitled-scenario-${randomString(4)}`}', async ({page}) => {
-  ${generateScenarioSteps(scenario.steps)}
+  ${generateScenarioSteps(scenario.steps, config)}
+  // await page.screenshot({path: '${scenario.name}.png', fullPage: true})
 });
     `);
   }
@@ -57,7 +44,7 @@ test('${feature.title} > ${scenario.name || `untitled-scenario-${randomString(4)
   return code.join('\r\n');
 }
 
-function generateScenarioSteps(steps: Step[]) {
+function generateScenarioSteps(steps: Step[], config: ResolvedConfig) {
   const sorted = steps.sort((step, next) => step.order - next.order);
   const code: string[] = [];
 
@@ -77,11 +64,16 @@ function generateScenarioSteps(steps: Step[]) {
     `;
   };
 
-  const createSubStepTest = (subSteps: BehaviourSubStep[]) =>
-    subSteps
+  const createSubStepTest = (subSteps: BehaviourSubStep[] | BehaviourSubSubStep[]) => {
+    return subSteps
       .sort((step, next) => step.order - next.order)
-      .map((step) => createBehaviourTest(step.behaviour, step.params))
+      .map((step) => {
+        // @ts-ignore
+        if (step.behaviour?.subSteps?.length) return createSubStepTest(step.behaviour.subSteps);
+        return createBehaviourTest(step.behaviour, step.params);
+      })
       .join('\r\n');
+  };
 
   for (const step of sorted) {
     if (step.behaviour.subSteps.length) {

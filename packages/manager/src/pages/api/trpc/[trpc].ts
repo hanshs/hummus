@@ -1,11 +1,6 @@
-import { router, createContext } from '@hummus/api';
-import { createNextApiHandler } from '@trpc/server/adapters/next';
+import { nextApiHandler } from '@hummus/api';
 
-// export API handler
-export default createNextApiHandler({
-  router,
-  createContext,
-});
+export default nextApiHandler;
 
 // to enable cors
 // const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -13,10 +8,7 @@ export default createNextApiHandler({
 //   await cors(req, res);
 
 //   // Let the tRPC handler do its magic
-//   return createNextApiHandler({
-//     router: appRouter,
-//     createContext,
-//   })(req, res);
+//   return nextApiHandler(req, res);
 // };
 
 // export default handler;

@@ -1,14 +1,13 @@
 {
   "name": "@hummus/runner",
   "author": "Hans Starkopf",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "bin": {
     "hummus": "./src/cli.ts"
   },
   "main": "./src/index.ts",
   "scripts": {
     "run": "tsx cli.ts",
-    "gen": "yarn with-env tsx ./src/generate.ts",
     "with-env": "dotenv -e ../../.env --",
     "build": "tsc"
   },

@@ -138,7 +138,7 @@ function Scenario(props: { scenario: Scenario; project: Project }) {
           placeholder="Scenario name"
           onChange={(e) => save({ name: e.target.value })}
         />
-        <button className="float-right hover:text-red-400" title="Delete" onClick={() => onDeleteScenario()}>
+        <button className="float-right hover:text-red-400" title="Delete scenario" onClick={() => onDeleteScenario()}>
           <Trash2 width={20} />
         </button>
       </div>
@@ -301,7 +301,7 @@ function Steps(props: { scenarioId: number; steps: Step[]; projectId: string }) 
                     >
                       <ChevronDown width={20} />
                     </button>
-                    <button className="hover:text-red-400" title="Delete" onClick={() => onRemoveStep(step)}>
+                    <button className="hover:text-red-400" title="Delete step" onClick={() => onRemoveStep(step)}>
                       <Delete width={20} />
                     </button>
                   </div>

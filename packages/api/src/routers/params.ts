@@ -8,7 +8,7 @@ const type = z.string();
 const featureId = z.string();
 const projectId = z.string();
 const paramId = z.number();
-const createParamSchema = z.object({ name, value, type, featureId, projectId });
+const createParamSchema = z.object({ name, value, type, projectId });
 const updateParamSchema = z.object({ param: z.object({ name, value }), id: paramId });
 
 export const paramsRouter = trpc.router({

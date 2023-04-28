@@ -6,9 +6,9 @@ import { Button } from '../ui/button';
 
 type Project = NonNullable<RouterOutputs['projects']['byId']>;
 type Feature = Project['features'][number];
-type Param = Feature['params'][number];
+type Param = Project['params'][number];
 
-export function ParamsTab(props: { feature: Feature; project: Project }) {
+export function ParamsTab(props: { project: Project }) {
   type ParamUpdateInput = RouterInputs['params']['update'];
   interface CreateParamForm extends HTMLFormElement {
     readonly elements: HTMLFormControlsCollection & {
@@ -21,7 +21,7 @@ export function ParamsTab(props: { feature: Feature; project: Project }) {
   const createParam = api.params.create.useMutation();
   const deleteParam = api.params.delete.useMutation();
   const updateParam = api.params.update.useMutation();
-  const sortedParams = props.feature.params.reduce<Record<string, Param[]>>((acc, param) => {
+  const sortedParams = props.project.params.reduce<Record<string, Param[]>>((acc, param) => {
     acc[param.type] ??= [];
     acc[param.type]!.push(param);
     return acc;
@@ -37,7 +37,7 @@ export function ParamsTab(props: { feature: Feature; project: Project }) {
         name: elements['new-param-name'].value,
         value: elements['new-param-value'].value,
         type: elements['new-param-type'].value,
-        featureId: props.feature.id,
+        // featureId: props.feature.id,
         projectId: props.project.id,
       },
       {
@@ -75,10 +75,10 @@ export function ParamsTab(props: { feature: Feature; project: Project }) {
       {/* <h2 className="text-lg font-semibold ">Parameters</h2> */}
       <div className="mt-6 flex">
         <div className="basis-1/2 space-y-6 pr-6">
-          {props.feature.params.length ? (
-            Object.entries(sortedParams).map(([type, params]) => {
+          {props.project.params.length ? (
+            Object.entries(sortedParams).map(([type, params], i) => {
               return (
-                <ul className="">
+                <ul key={i} className="">
                   <h3 className="text-lg text-blue-800">{type}</h3>
                   {params.map((param) => (
                     <li
@@ -134,8 +134,10 @@ export function ParamsTab(props: { feature: Feature; project: Project }) {
                 <label className="block text-sm text-slate-400">Type</label>
                 <input required className="form-input" list="param-types" id="new-param-type" name="new-param-type" />
                 <datalist id="param-types">
-                  {Object.keys(sortedParams).map((type) => (
-                    <option value={type}>{type}</option>
+                  {Object.keys(sortedParams).map((type, i) => (
+                    <option value={type} key={i}>
+                      {type}
+                    </option>
                   ))}
                 </datalist>
               </div>
