@@ -67,51 +67,51 @@ seed()
   });
 
 async function seed() {
-  await deleteEverything();
+  // await deleteEverything();
 
   const user = await upsertUser();
-  const project = await upsertProject(user);
-  const feature = await upsertFeature(project);
+  // const project = await upsertProject(user);
+  // const feature = await upsertFeature(project);
 
   await upsertBehaviours();
-  await upsertParams(feature);
-  await upsertScenario(feature);
+  // await upsertParams(feature);
+  // await upsertScenario(feature);
 }
 
-async function deleteEverything() {
-  await prisma.param.deleteMany();
-  await prisma.step.deleteMany();
-  await prisma.behaviour.deleteMany();
-  await prisma.scenario.deleteMany();
-  await prisma.feature.deleteMany();
-  await prisma.project.deleteMany();
-  await prisma.user.deleteMany();
-  console.log('Deleted everything, yikes!');
-}
+// async function deleteEverything() {
+//   await prisma.param.deleteMany();
+//   await prisma.step.deleteMany();
+//   await prisma.behaviour.deleteMany();
+//   await prisma.scenario.deleteMany();
+//   await prisma.feature.deleteMany();
+//   await prisma.project.deleteMany();
+//   await prisma.user.deleteMany();
+//   console.log('Deleted everything, yikes!');
+// }
 
-function upsertParams(feature: Feature) {
-  const transactions = [];
+// function upsertParams(feature: Feature) {
+//   const transactions = [];
 
-  for (const step of steps) {
-    for (const param of step.params) {
-      transactions.push(
-        prisma.param.upsert({
-          where: { value: param.value },
-          create: {
-            name: param.name,
-            value: param.value,
-            type: param.type,
-            feature: { connect: { id: feature.id } },
-            project: { connect: { id: project.id } },
-          },
-          update: {},
-        }),
-      );
-    }
-  }
+//   for (const step of steps) {
+//     for (const param of step.params) {
+//       transactions.push(
+//         prisma.param.upsert({
+//           where: { value: param.value },
+//           create: {
+//             name: param.name,
+//             value: param.value,
+//             type: param.type,
+//             feature: { connect: { id: feature.id } },
+//             project: { connect: { id: project.id } },
+//           },
+//           update: {},
+//         }),
+//       );
+//     }
+//   }
 
-  return prisma.$transaction(transactions);
-}
+//   return prisma.$transaction(transactions);
+// }
 
 async function upsertBehaviours() {
   const transactions = [];
@@ -129,27 +129,27 @@ async function upsertBehaviours() {
   return await prisma.$transaction(transactions);
 }
 
-function upsertProject(user: User) {
-  return prisma.project.upsert({
-    where: { id: project.id },
-    create: {
-      ...project,
-      users: { connect: { id: user.id } },
-    },
-    update: {},
-  });
-}
+// function upsertProject(user: User) {
+//   return prisma.project.upsert({
+//     where: { id: project.id },
+//     create: {
+//       ...project,
+//       users: { connect: { id: user.id } },
+//     },
+//     update: {},
+//   });
+// }
 
-function upsertFeature(project: Project) {
-  return prisma.feature.upsert({
-    where: { id: feature.id },
-    create: {
-      ...feature,
-      project: { connect: { id: project.id } },
-    },
-    update: {},
-  });
-}
+// function upsertFeature(project: Project) {
+//   return prisma.feature.upsert({
+//     where: { id: feature.id },
+//     create: {
+//       ...feature,
+//       project: { connect: { id: project.id } },
+//     },
+//     update: {},
+//   });
+// }
 
 async function upsertUser() {
   const credentials = {
@@ -171,63 +171,63 @@ async function upsertUser() {
   });
 }
 
-async function upsertScenario(feature: Feature) {
-  await prisma.scenario.upsert({
-    where: { id: 1 },
-    create: {
-      name: 'User can log in',
-      feature: { connect: { id: feature.id } },
-      steps: {
-        create: steps.map((step, index) => ({
-          order: index + 1,
-          behaviour: { connect: { id: step.behaviour } },
-          params: { connect: step.params.map((param) => ({ name: param.name })) },
-        })),
-      },
-    },
-    update: {},
-  });
+// async function upsertScenario(feature: Feature) {
+//   await prisma.scenario.upsert({
+//     where: { id: 1 },
+//     create: {
+//       name: 'User can log in',
+//       feature: { connect: { id: feature.id } },
+//       steps: {
+//         create: steps.map((step, index) => ({
+//           order: index + 1,
+//           behaviour: { connect: { id: step.behaviour } },
+//           params: { connect: step.params.map((param) => ({ name: param.name })) },
+//         })),
+//       },
+//     },
+//     update: {},
+//   });
 
-  await prisma.scenario.upsert({
-    where: { id: 2 },
-    create: {
-      name: 'User can log in with combined step',
-      feature: { connect: { id: feature.id } },
-      steps: {
-        create: [
-          {
-            order: 1,
-            behaviour: {
-              create: {
-                value: 'I am logged in as user',
-                project: { connect: { id: project.id } },
-                subSteps: {
-                  create: steps.map((step, index) => ({
-                    order: index + 1,
-                    behaviour: { connect: { id: step.behaviour } },
-                    params: { connect: step.params.map((param) => ({ name: param.name })) },
-                  })),
-                },
-              },
-            },
-          },
-        ],
-      },
-    },
-    update: {},
-  });
+//   await prisma.scenario.upsert({
+//     where: { id: 2 },
+//     create: {
+//       name: 'User can log in with combined step',
+//       feature: { connect: { id: feature.id } },
+//       steps: {
+//         create: [
+//           {
+//             order: 1,
+//             behaviour: {
+//               create: {
+//                 value: 'I am logged in as user',
+//                 project: { connect: { id: project.id } },
+//                 subSteps: {
+//                   create: steps.map((step, index) => ({
+//                     order: index + 1,
+//                     behaviour: { connect: { id: step.behaviour } },
+//                     params: { connect: step.params.map((param) => ({ name: param.name })) },
+//                   })),
+//                 },
+//               },
+//             },
+//           },
+//         ],
+//       },
+//     },
+//     update: {},
+//   });
 
-  // await prisma.behaviour.create({
-  //   data: {
-  //     value: 'I am logged in as user',
-  //     project: { connect: { id: project.id } },
-  //     subSteps: {
-  //       create: steps.map((step, index) => ({
-  //         order: index + 1,
-  //         behaviour: { connect: { id: step.behaviour } },
-  //         params: { connect: step.params.map((param) => ({ name: param.name })) },
-  //       })),
-  //     },
-  //   },
-  // });
-}
+//   // await prisma.behaviour.create({
+//   //   data: {
+//   //     value: 'I am logged in as user',
+//   //     project: { connect: { id: project.id } },
+//   //     subSteps: {
+//   //       create: steps.map((step, index) => ({
+//   //         order: index + 1,
+//   //         behaviour: { connect: { id: step.behaviour } },
+//   //         params: { connect: step.params.map((param) => ({ name: param.name })) },
+//   //       })),
+//   //     },
+//   //   },
+//   // });
+// }
