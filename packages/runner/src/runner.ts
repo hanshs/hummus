@@ -11,7 +11,7 @@ function getParam(params: ParamBase[], type: string) {
   return params.find((p) => p.type === type);
 }
 
-export function testBehaviour(behaviour: string, params: ParamBase[], page: Page) {
+export async function testBehaviour(behaviour: string, params: ParamBase[], page: Page) {
   const location = getParam(params, 'location');
   const selector = getParam(params, 'selector');
   const text = getParam(params, 'text');

@@ -24,7 +24,7 @@ export function SettingsTab(props: { project: Project; feature: Feature }) {
   return (
     <>
       {/* <h2 className="text-lg font-semibold ">Confiure</h2> */}
-      <div className="mt-6 flex">
+      <div className="mt-6">
         <Button variant="outline" size="sm" onClick={onDelete}>
           Delete feature
         </Button>

@@ -2,6 +2,7 @@
   "name": "@hummus/runner",
   "author": "Hans Starkopf",
   "version": "0.0.1",
+  "license": "MIT",
   "bin": {
     "hummus": "./src/cli.ts"
   },

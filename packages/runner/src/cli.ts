@@ -15,15 +15,18 @@ function loadConfig() {
 }
 
 async function run() {
+  log('Loading config ...');
   const config = loadConfig();
   log('Config loaded!');
 
+  log(`Retrieving project ...`);
   const project = await getProject(config);
   log(`Project "${project?.name}" retrieved!`);
 
+  log(`Generating test files ...`);
   await generate(project, config);
-
   log(`Test files generated!`);
+
   log('Executing spec using Playwright ...');
 
   spawn('npx', ['playwright', 'test', config.dir, '--headed'], { stdio: 'inherit', shell: true });

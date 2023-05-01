@@ -1,20 +1,15 @@
 import { Page } from '@playwright/test';
-import { waitForSelector } from './wait-for';
+import { getElement } from './get-element';
 
 export async function clickElement(page: Page, selector: string) {
-  const element = await page.waitForSelector(selector);
-  if (element) {
-    return element.click();
-  }
+  const element = await getElement(page, selector);
 
-  return false;
+  element.click();
 }
 
-export const inputElementValue = async (page: Page, selector: string, input: string): Promise<void> => {
-  if (await waitForSelector(page, selector)) {
-    await page.focus(selector);
-    await page.fill(selector, input);
-  } else {
-    throw new Error(`Could not find element with selector ${selector}`);
-  }
-};
+export async function inputElementValue(page: Page, selector: string, input: string) {
+  const element = await getElement(page, selector);
+
+  element.focus();
+  element.fill(input);
+}

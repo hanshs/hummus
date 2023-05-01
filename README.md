@@ -11,18 +11,18 @@ Hummus is a popular Middle Eastern dish that is made from ground chickpeas and a
 .vscode
   └─ Recommended extensions and settings for VSCode users
 apps
+
+packages
   └─ manager
       ├─ Next.js 13
       ├─ React 18
-      ├─ TailwindCSS
-      └─ E2E typesafe API server & client
-packages
- ├─ api
- |   └─ tRPC v10 router definition
- ├─ auth
-     └─ authentication using next-auth
- └─ db
-     └─ typesafe db-calls using Prisma
+      └─ TailwindCSS
+  ├─ runner
+      └─ CLI node module
+  ├─ api
+  |   └─ tRPC v10 router definition
+  └─ db
+      └─ MySQL with Prisma
 ```
 
 ## Quick Start

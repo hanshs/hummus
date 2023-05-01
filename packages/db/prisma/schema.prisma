@@ -84,7 +84,7 @@ model Step {
 
 model Behaviour {
     id        String   @id @default(uuid())
-    value     String   @unique
+    value     String
     project   Project? @relation(fields: [projectId], references: [id])
     steps     Step[]   @relation("StepBehaviour")
     subSteps  Step[]   @relation("BehaviourSubSteps")

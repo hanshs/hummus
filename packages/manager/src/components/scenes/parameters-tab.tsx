@@ -70,6 +70,8 @@ export function ParamsTab(props: { project: Project }) {
     updateParam.mutate(data, { onSuccess: () => context.projects.byId.invalidate() });
   }, 1000);
 
+  const paramTypes = [...new Set(['selector', 'text', 'location', ...Object.keys(sortedParams)])];
+
   return (
     <>
       {/* <h2 className="text-lg font-semibold ">Parameters</h2> */}
@@ -107,7 +109,7 @@ export function ParamsTab(props: { project: Project }) {
               );
             })
           ) : (
-            <p className="text-gray-600">This feature has no parameters.</p>
+            <p className="text-gray-600">This project has no parameters.</p>
           )}
         </div>
         <div className="basis-1/2 space-y-6">
@@ -132,9 +134,9 @@ export function ParamsTab(props: { project: Project }) {
               </div>
               <div className="space-y-1">
                 <label className="block text-sm text-slate-400">Type</label>
-                <input required className="form-input" list="param-types" id="new-param-type" name="new-param-type" />
+                <input required className="form-input" list="param-types" autoComplete="off" name="new-param-type" />
                 <datalist id="param-types">
-                  {Object.keys(sortedParams).map((type, i) => (
+                  {paramTypes.map((type, i) => (
                     <option value={type} key={i}>
                       {type}
                     </option>

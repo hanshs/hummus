@@ -42,7 +42,6 @@ function generateScenarios(feature: Feature, config: ResolvedConfig) {
     code.push(`
 test('${feature.title} > ${scenario.name || `untitled-scenario-${randomString(4)}`}', async ({page}) => {
   ${generateScenarioSteps(scenario.steps, config)}
-  // await page.screenshot({path: '${scenario.name}.png', fullPage: true})
 });
     `);
   }
