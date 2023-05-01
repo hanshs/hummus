@@ -4,9 +4,9 @@ on:
   pull_request:
     types: [opened, synchronize]
   push:
-    branches: ["main"]
+    branches: ['main']
 
-# You can leverage Vercel Remote Caching with Turbo to speed up your builds
+# Vercel Remote Caching can be leveraged with Turbo to speed up builds
 # @link https://turborepo.org/docs/core-concepts/remote-caching#remote-caching-on-vercel-builds
 # env:
 #   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
@@ -26,7 +26,7 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: "yarn"
+          cache: 'yarn'
 
       - name: Install deps
         run: yarn
@@ -36,11 +36,6 @@ jobs:
         with:
           path: ${{ github.workspace }}apps/nextjs/.next/cache
           key: ${{ runner.os }}-${{ runner.node }}-${{ hashFiles('**/yarn.lock') }}-nextjs
-
-      # Normally, this would be done as part of the turbo pipeline - however since the Expo app doesn't depend on `@hummus/db` it doesn't care.
-      # TODO: Free for all to find a better solution here.
-      # - name: Generate Prisma Client
-      #   run: yarn turbo db:gen
 
       - name: Build, lint and type-check
         run: yarn turbo build lint type-check
