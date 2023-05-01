@@ -7,7 +7,8 @@
     "with-env": "dotenv -e ../../.env --",
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "clean": "rimraf .dist .turbo node_modules --impl=native"
   },
   "dependencies": {
     "@hummus/runner": "*",
@@ -20,6 +21,7 @@
     "@babel/runtime": "^7.13.10",
     "@vitejs/plugin-react-refresh": "^1.1.0",
     "autoprefixer": "^10.2.4",
+    "dotenv-cli": "^6.0.0",
     "postcss": "^8.2.6",
     "tailwindcss": "^2.0.3",
     "vite": "^2.0.0"

@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "main": "./index.ts",
   "types": "./index.ts",
+  "license": "MIT",
   "scripts": {
     "dev": "tsx watch ./src/server",
     "clean": "rimraf .turbo node_modules --impl=native",
