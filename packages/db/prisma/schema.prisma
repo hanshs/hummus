@@ -1,9 +1,12 @@
 // https://pris.ly/d/prisma-schema
+datasource db {
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
+}
 
 generator client {
     provider = "prisma-client-js"
-    // previewFeatures = ["jsonProtocol"]
-    // output   = "../../../node_modules/.prisma/client"
 }
 
 generator erd1 {
@@ -15,14 +18,6 @@ generator erd1 {
 generator erd2 {
     provider = "prisma-erd-generator"
     output   = "ERD2.svg"
-}
-
-datasource db {
-    provider = "mysql"
-    // provider = "postgres"
-
-    url          = env("DATABASE_URL")
-    relationMode = "prisma"
 }
 
 model User {
