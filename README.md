@@ -57,7 +57,12 @@ yarn db:push
 # Populate the database with seed data
 yarn db:seed
 
-# Start everything locally
+
+```
+
+### 3. Start everything locally
+
+```diff
 yarn dev
 ```
 
