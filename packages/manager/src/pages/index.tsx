@@ -76,9 +76,9 @@ export default function Home() {
         <button name="login" className="button-primary w-full" value="login" data-test="login-button">
           Log in
         </button>
-        {/* <button name="signup" className="button-secondary w-full" value="signup" data-test="signup-button">
+        <button name="signup" className="button-secondary w-full" value="signup" data-test="signup-button">
           Sign up
-        </button> */}
+        </button>
       </div>
 
       {login.error && <p>{login.error.message}</p>}
