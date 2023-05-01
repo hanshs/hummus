@@ -16,8 +16,6 @@ export async function testBehaviour(behaviour: string, params: ParamBase[], page
   const selector = getParam(params, 'selector');
   const text = getParam(params, 'text');
 
-  let error;
-
   switch (behaviour) {
     case 'I am on <location>':
       if (location) return navigateToLocation(page, location.value);
@@ -42,11 +40,7 @@ export async function testBehaviour(behaviour: string, params: ParamBase[], page
 
     case 'The <selector> should not be visible':
       if (selector) return verifyElementVisibility(page, selector.value, true);
-
-    default:
-      error = new Error(`The step definition for "${behaviour}" is not implemented.`);
   }
 
-  if (error) throw error;
-  else throw new Error(`Unable to execute behaviour ${behaviour} - ${JSON.stringify(params)}`);
+  throw new Error(`Unable to execute behaviour ${behaviour} with params - ${JSON.stringify(params)}`);
 }

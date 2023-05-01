@@ -10,9 +10,16 @@ function cleanDirectory(dirPath: string) {
 export async function generate(project: Project, config: ResolvedConfig) {
   cleanDirectory(config.dir);
 
-  if (project?.features) {
+  if (!project) {
+    throw new Error(
+      'Could not retrieve the project, are you sure the projectId is specified correctly in hummus.config?',
+    );
+  }
+
+  if (project.features) {
+    const dir = path.join(process.cwd(), config.dir);
+
     for (const feature of project.features) {
-      const dir = path.join(process.cwd(), config.dir);
       const file = path.join(
         dir,
         `${feature.title?.toLowerCase().split(' ').join('-') || `untitled-feature-${randomString(4)}`}.spec.ts`,

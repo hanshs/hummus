@@ -9,8 +9,8 @@ node_modules
 coverage
 
 # database
-prisma/db.sqlite
-prisma/db.sqlite-journal
+db.sqlite
+db.sqlite-journal
 
 # next.js
 .next/
@@ -48,5 +48,6 @@ yarn-error.log*
 .temp
 
 playwright-report
+html-report
 test-results
 .hummus

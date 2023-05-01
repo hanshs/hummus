@@ -7,8 +7,11 @@ import { getProject } from './manager';
 import { generate } from './generator';
 import { resolveConfig } from './config';
 
+const args = process.argv.slice(2);
+const dir = args.find((s) => s.startsWith('--dir'))?.split('=')[1] || '';
+
 function loadConfig() {
-  const configPath = path.join(process.cwd(), 'hummus.config.ts');
+  const configPath = path.join(process.cwd(), dir, 'hummus.config.ts');
   const config = require(configPath).default;
 
   return resolveConfig(config);
@@ -29,7 +32,7 @@ async function run() {
 
   log('Executing spec using Playwright ...');
 
-  spawn('npx', ['playwright', 'test', config.dir, '--headed'], { stdio: 'inherit', shell: true });
+  spawn('npx', ['playwright', 'test', `--config=${dir}`, dir], { stdio: 'inherit', shell: true });
 }
 
 function log(...args: any[]) {

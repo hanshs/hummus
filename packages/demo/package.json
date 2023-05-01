@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "test": "yarn with-env hummus run",
+    "test": "yarn with-env hummus run --dir=tests",
     "with-env": "dotenv -e ../../.env --",
     "dev": "vite",
     "build": "vite build",
