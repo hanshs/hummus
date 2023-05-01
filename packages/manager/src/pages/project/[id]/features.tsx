@@ -105,7 +105,7 @@ export default function ProjectPage() {
                   {selectedTab === 'Feature' && (
                     <FeatureTab key={selectedFeatureId} feature={selectedFeature} project={project} />
                   )}
-                  {selectedTab === 'Parameters' && <ParamsTab feature={selectedFeature} project={project} />}
+                  {selectedTab === 'Parameters' && <ParamsTab project={project} />}
                   {selectedTab === 'Behaviours' && <BehavioursTab project={project} />}
                   {selectedTab === 'Settings' && <SettingsTab feature={selectedFeature} project={project} />}
                 </>
