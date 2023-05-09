@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 import { createTRPCProxyClient, httpLink } from '@trpc/client';
 import { ResolvedConfig } from './config';
 
-export type Project = RouterOutputs['projects']['byId'];
+export type Project = NonNullable<RouterOutputs['projects']['byId']>;
 export type Feature = NonNullable<Project>['features'][number];
 export type Scenario = Feature['scenarios'][number];
 export type Step = Scenario['steps'][number];
@@ -24,7 +24,7 @@ export async function getProject(config: ResolvedConfig) {
     transformer,
     links: [
       httpLink({
-        url: config.managerURL,
+        url: `${config.managerURL}/api/trpc`,
         headers() {
           return {
             Authorization: token,

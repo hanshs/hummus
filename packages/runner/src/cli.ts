@@ -24,15 +24,20 @@ async function run() {
 
   log(`Retrieving project ...`);
   const project = await getProject(config);
-  log(`Project "${project?.name}" retrieved!`);
 
-  log(`Generating test files ...`);
-  await generate(project, config);
-  log(`Test files generated!`);
+  if (project) {
+    log(`Project "${project?.name}" retrieved!`);
 
-  log('Executing spec using Playwright ...');
+    log(`Generating test files ...`);
+    await generate(project, config);
+    log(`Test files generated!`);
 
-  spawn('npx', ['playwright', 'test', `--config=${dir}`, dir], { stdio: 'inherit', shell: true });
+    log('Executing spec using Playwright ...');
+
+    spawn('npx', ['playwright', 'test', `--config=${dir}`, dir], { stdio: 'inherit', shell: true });
+  } else {
+    log('Failed to retrieve project with ID: ', config.projectId);
+  }
 }
 
 function log(...args: any[]) {

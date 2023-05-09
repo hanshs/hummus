@@ -6,7 +6,6 @@
   "types": "./index.ts",
   "license": "MIT",
   "scripts": {
-    "dev": "tsx watch ./src/server",
     "clean": "rimraf .turbo node_modules --impl=native",
     "lint": "eslint",
     "type-check": "tsc --noEmit"

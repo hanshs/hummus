@@ -10,7 +10,7 @@ declare module 'iron-session' {
 }
 
 export const sessionOptions: IronSessionOptions = {
-  password: 'top-secret-iron-session-password-for-this-app-please-dont-hack',
+  password: process.env.SESSION_SECRET!,
   cookieName: 'hummus-session',
   cookieOptions: {
     secure: process.env.NODE_ENV === 'production',

@@ -10,12 +10,6 @@ function cleanDirectory(dirPath: string) {
 export async function generate(project: Project, config: ResolvedConfig) {
   cleanDirectory(config.dir);
 
-  if (!project) {
-    throw new Error(
-      'Could not retrieve the project, are you sure the projectId is specified correctly in hummus.config?',
-    );
-  }
-
   if (project.features) {
     const dir = path.join(process.cwd(), config.dir);
 
@@ -32,9 +26,8 @@ export async function generate(project: Project, config: ResolvedConfig) {
 
       code.push(generateScenarios(feature, config));
 
-      if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-      }
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
       await fs.promises.writeFile(file, code.join('\r\n'));
     }
   } else {
