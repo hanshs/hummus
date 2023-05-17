@@ -1,0 +1,89 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table User {
+  id String [pk]
+  username String [unique, not null]
+  password String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  updatedAt DateTime [not null]
+  accessToken String [unique, not null]
+  projects Project [not null]
+}
+
+Table Project {
+  id String [pk]
+  name String [not null]
+  users User [not null]
+  features Feature [not null]
+  behaviours Behaviour [not null]
+  params Param [not null]
+}
+
+Table Feature {
+  id String [pk]
+  title String
+  description String
+  scenarios Scenario [not null]
+  params Param [not null]
+  project Project [not null]
+  projectId String [not null]
+}
+
+Table Scenario {
+  id Int [pk, increment]
+  name String
+  steps Step [not null]
+  feature Feature [not null]
+  featureId String [not null]
+}
+
+Table Step {
+  id Int [pk, increment]
+  order Int [not null]
+  params Param [not null]
+  behaviour Behaviour [not null]
+  scenario Scenario
+  parentBehaviour Behaviour
+  behaviourId String [not null]
+  scenarioId Int
+  parentBehaviourId String
+}
+
+Table Behaviour {
+  id String [pk]
+  value String [not null]
+  project Project
+  steps Step [not null]
+  subSteps Step [not null]
+  projectId String
+}
+
+Table Param {
+  id Int [pk, increment]
+  name String [not null]
+  value String [not null]
+  type String [not null]
+  steps Step [not null]
+  feature Feature
+  featureId String
+  project Project [not null]
+  projectId String [not null]
+}
+
+Ref: Feature.projectId > Project.id [delete: Cascade]
+
+Ref: Scenario.featureId > Feature.id
+
+Ref: Step.behaviourId > Behaviour.id
+
+Ref: Step.scenarioId > Scenario.id
+
+Ref: Step.parentBehaviourId > Behaviour.id
+
+Ref: Behaviour.projectId > Project.id
+
+Ref: Param.featureId > Feature.id
+
+Ref: Param.projectId > Project.id

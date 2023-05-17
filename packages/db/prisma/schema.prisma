@@ -20,6 +20,10 @@ generator erd2 {
     output   = "ERD2.svg"
 }
 
+generator dbml {
+    provider = "prisma-dbml-generator"
+}
+
 model User {
     id          String    @id @default(cuid())
     username    String    @unique
