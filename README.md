@@ -1,6 +1,6 @@
 # HUMMUS
 
-Hummus is a behaviour-driven specification management and execution system, unlocking collaboration in requirements specification and management activites, without relying on technical tools or Domain Specific Languages (DSL), such as Gherkin. Hummus aims to free developers from DSL and test-suite maintenance and allow all stakeholders to efficiently engage with software specifications.
+Hummus is a behaviour-driven specification management and execution system, unlocking collaboration in requirements specification and management activites, without relying on technical tools or Domain Specific Languages (DSL), such as Gherkin. Hummus aims to free developers from DSL and test-suite maintenance and allow all stakeholders to efficiently engage with software specifications and testing activities.
 
 ## Features
 
