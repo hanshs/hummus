@@ -52,16 +52,13 @@ export const authRouter = trpc.router({
       });
     }
 
-    try {
-      return ctx.prisma.user.create({
-        data: { username, password: await bcrypt.hash(password, 10) },
-      });
-    } catch (e) {
-      throw new TRPCError({
-        code: 'INTERNAL_SERVER_ERROR',
-        message: 'Something went wrong.',
-      });
-    }
+    const newUser = await ctx.prisma.user.create({
+      data: { username, password: await bcrypt.hash(password, 10) },
+    });
+
+    if (newUser) return { username: newUser.username };
+
+    throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
   }),
   getSession: publicProcedure.query(({ ctx }) => {
     return ctx.session;
