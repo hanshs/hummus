@@ -43,22 +43,25 @@ export const authRouter = trpc.router({
   }),
   signup: publicProcedure.input(authSchema).mutation(async ({ ctx, input }) => {
     const { username, password } = input;
-    const user = await ctx.prisma.user.findFirst({ where: { username } });
 
-    if (user) {
-      throw new TRPCError({
-        code: 'CONFLICT',
-        message: 'This username is not available.',
-      });
+    try {
+        const user = await ctx.prisma.user.findFirst({ where: { username } });
+
+        if (user) {
+          throw new TRPCError({
+            code: 'CONFLICT',
+            message: 'This username is not available.',
+          });
+        }
+    
+        const newUser = await ctx.prisma.user.create({
+          data: { username, password: await bcrypt.hash(password, 10) },
+        });
+    
+        if (newUser) return { username: newUser.username };
+    } catch (e) {
+        throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
     }
-
-    const newUser = await ctx.prisma.user.create({
-      data: { username, password: await bcrypt.hash(password, 10) },
-    });
-
-    if (newUser) return { username: newUser.username };
-
-    throw new TRPCError({ code: 'INTERNAL_SERVER_ERROR' });
   }),
   getSession: publicProcedure.query(({ ctx }) => {
     return ctx.session;
